@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breanna Thayillam CS + Design Portfolio</title>
+<style>
+/* ============================================================
+   SHORELINE — an interactive portfolio
+   Sand on the left, sea on the right, the tide line running
+   vertically down the screen. Scroll to walk the beach.
+   ============================================================ */
+
+:root{
+  --shore: 52%;               /* horizontal position of the tide line */
+  --trail: 170px;             /* footprint / shell gutter */
+  --dry: 74vw;                /* rightmost x still on dry sand — JS measures it */
+
+  --ink:        #2c3a40;
+  --ink-soft:   #5f6f74;
+  --ink-faint:  #8b9a9d;
+  --sand-warm:  #e8cb9c;
+  --shell:      #fdf6e9;
+  --foam:       #ffffff;
+  --deep:       #0e5468;
+
+  --script: 'Snell Roundhand','Brush Script MT','Segoe Script','Bradley Hand',cursive;
+  --sans: 'Avenir Next','Avenir','Helvetica Neue',system-ui,-apple-system,sans-serif;
+
+  --ease: cubic-bezier(.22,.8,.28,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:#e8cb9c;
+  overflow-x:hidden;
+  cursor:default;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- fixed beach ---------- */
+#sea{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+
+#grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+}
+
+/* vignette so text always sits on calm sand */
+#vign{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 80% at 18% 40%, rgba(255,246,228,.34), rgba(255,246,228,0) 62%);
+}
+
+/* ---------- footprints trailing the cursor ---------- */
+#prints{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.print{
+  position:absolute;width:26px;height:40px;margin:-20px 0 0 -13px;
+  opacity:0;transform-origin:50% 50%;
+  animation:press .5s var(--ease) forwards, lift 7s linear forwards;
+}
+.print svg{width:100%;height:100%;display:block}
+@keyframes press{ from{opacity:0;transform:var(--t) scale(.72)} to{opacity:.42;transform:var(--t) scale(1)} }
+@keyframes lift{ 0%,42%{filter:none} 100%{opacity:0} }
+/* a print the swash reaches dissolves instead of fading */
+.print.wash{animation:washaway .9s var(--ease) forwards}
+@keyframes washaway{
+  from{opacity:.42;transform:var(--t) scale(1);filter:blur(0)}
+  to{opacity:0;transform:var(--t) scale(1.3);filter:blur(2px)}
+}
+
+/* ---------- header ---------- */
+/* a solid off-white bar, so the beach scrolls under it rather than through it */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:22;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 34px;
+  background:rgba(255,250,240,.96);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(120,95,60,.16);
+  box-shadow:0 6px 20px -14px rgba(60,45,25,.5);
+}
+.logo{font-family:var(--script);font-size:34px;line-height:1;color:var(--ink);text-decoration:none}
+.topnav{display:flex;gap:30px}
+.topnav a{
+  font-size:10.5px;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;opacity:.72;position:relative;padding-bottom:3px;
+}
+.topnav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:currentColor;transition:right .4s var(--ease)}
+.topnav a:hover{opacity:1}
+.topnav a:hover::after{right:0}
+
+/* ---------- layout ---------- */
+main{position:relative;z-index:10}
+#trail{position:absolute;inset:0;pointer-events:none;z-index:-1}
+#trail .step{position:absolute;width:24px;height:37px;opacity:.3;margin:-18px 0 0 -12px}
+#trail .step svg{width:100%;height:100%;display:block}
+
+section{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:var(--trail) minmax(0,1fr);
+  align-items:center;
+  padding:120px 0;
+}
+/* nothing reaches past the dry sand */
+.body{max-width:min(540px, var(--dry) - var(--trail));padding-right:48px}
+
+.eyebrow{
+  font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:currentColor;opacity:.6}
+h1{font-family:var(--script);font-weight:400;font-size:clamp(44px,6vw,74px);line-height:1.02;letter-spacing:.01em}
+h2{font-family:var(--script);font-weight:400;font-size:clamp(34px,4.2vw,50px);line-height:1.05}
+.lede{margin-top:20px;font-size:15.5px;line-height:1.75;color:var(--ink-soft);max-width:40ch}
+
+.cta{
+  display:inline-flex;align-items:center;gap:12px;margin-top:30px;
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;background:none;border:0;font-family:inherit;cursor:pointer;
+}
+.cta .arrow{display:block;width:30px;height:1px;background:currentColor;position:relative;transition:width .4s var(--ease)}
+.cta .arrow::after{content:"";position:absolute;right:0;top:-3px;width:7px;height:7px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
+.cta:hover .arrow{width:48px}
+
+/* reveal */
+.rev{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rev.in{opacity:1;transform:none}
+.rev:nth-child(2){transition-delay:.06s}
+.rev:nth-child(3){transition-delay:.12s}
+.rev:nth-child(4){transition-delay:.18s}
+
+/* ---------- work: a beachcomb down the shoreline ---------- */
+/* The cards line up with every other section's text and stop at the dry sand.
+   The shells don't live here at all — they are placed out on the footprint
+   line by JS, so the marker column is a zero-width anchor. */
+#work{display:block;padding:150px 0 160px var(--trail)}
+
+.work-head{width:min(620px, var(--dry) - var(--trail));margin:0 0 46px}
+.work-head .lede{max-width:44ch}
+.beachcomb{position:relative;width:min(620px, var(--dry) - var(--trail))}
+
+/* one row per project: the card, with its shell anchored out to the left */
+.find{
+  display:grid;grid-template-columns:0 minmax(0,1fr);
+  gap:0;align-items:start;margin-bottom:34px;
+}
+.find:last-child{margin-bottom:0}
+/* a row fades in but never slides — the trail is drawn from measured shell
+   positions, and a translate would leave the path pointing at where they were */
+.find.rev{transform:none}
+.marker{position:relative;min-height:90px}
+
+.shellbtn{
+  position:absolute;top:18px;width:46px;height:46px;
+  background:none;border:0;padding:0;cursor:pointer;
+  transition:transform .5s var(--ease),filter .5s var(--ease);
+}
+.shellbtn svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 10px rgba(120,90,50,.42))}
+.shellbtn:focus-visible{outline:2px solid var(--ink);outline-offset:6px;border-radius:50%}
+
+/* The string the shells are threaded on: one continuous wave, carrying on from
+   where the footprints leave off. Two copies of the same path — hovering a find
+   reveals the darker one through a clip window, so a stretch of the line changes
+   colour and nothing else. The geometry never moves under the cursor. */
+#combtrail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:-1}
+#combtrail path{
+  fill:none;stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2.5 13;
+}
+#combtrail .strand{stroke:rgba(150,110,60,.5)}
+#combtrail .lit{stroke:rgba(105,71,30,.92);opacity:0;transition:opacity .45s var(--ease)}
+#combtrail.on .lit{opacity:1}
+#combcliprect{transition:y .5s var(--ease),height .5s var(--ease)}
+
+/* ---------- project card ---------- */
+.pcard{
+  display:flex;flex-direction:column;max-width:340px;
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  background:linear-gradient(180deg, rgba(255,253,248,.9), rgba(255,247,236,.78));
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 10px 26px -18px rgba(40,60,65,.55);
+  transition:box-shadow .5s var(--ease),transform .5s var(--ease),border-color .5s var(--ease);
+}
+.pcard:hover,.pcard:focus-visible{
+  transform:translateY(-6px);
+  border-color:rgba(255,255,255,.95);
+  box-shadow:0 28px 54px -26px rgba(28,54,60,.7);
+  outline:none;
+}
+.pcard:focus-visible{box-shadow:0 0 0 2px var(--ink),0 28px 54px -26px rgba(28,54,60,.7)}
+
+.thumb{position:relative;height:118px;flex:0 0 118px;overflow:hidden}
+.thumb svg{width:100%;height:100%;display:block}
+.thumb .badge{
+  position:absolute;left:11px;bottom:9px;width:24px;height:24px;
+  filter:drop-shadow(0 3px 5px rgba(40,30,15,.45));
+  transition:transform .5s var(--ease);
+}
+
+.cbody{padding:15px 18px 18px;display:flex;flex-direction:column}
+.cbody .meta{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+.cbody h3{margin-top:5px;font-size:17px;font-weight:600;letter-spacing:.005em}
+.cbody .short{margin-top:7px;font-size:12.5px;line-height:1.6;color:var(--ink-soft)}
+
+/* the detail drawer inside each card — 0fr → 1fr animates height with no magic numbers */
+.more{display:grid;grid-template-rows:0fr;opacity:0;
+  transition:grid-template-rows .55s var(--ease),opacity .4s var(--ease),margin-top .55s var(--ease)}
+.more > div{overflow:hidden}
+.more ul{list-style:none}
+.more li{position:relative;padding-left:14px;font-size:11.5px;line-height:1.5;color:var(--ink-soft);margin-bottom:5px}
+.more li::before{content:"";position:absolute;left:0;top:6px;width:4px;height:4px;border-radius:50%;background:rgba(60,140,150,.55)}
+.more .open{margin-top:10px;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px}
+.more .open span{width:22px;height:1px;background:currentColor;position:relative}
+.more .open span::after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
+
+/* ---------- shell and card, hovered as one ---------- */
+/* Either half of a find wakes the other: the shell is inside .find, so one
+   :has() covers hovering the card, hovering the shell, and tabbing to either. */
+.find:has(.pcard:hover) .more,
+.find:has(.shellbtn:hover) .more,
+.find:has(:focus-visible) .more{grid-template-rows:1fr;opacity:1;margin-top:14px}
+
+.find:has(.pcard:hover) .shellbtn,
+.find:has(.shellbtn:hover) .shellbtn,
+.find:has(:focus-visible) .shellbtn{transform:rotate(-10deg) scale(1.15)}
+
+.find:has(.shellbtn:hover) .pcard{
+  transform:translateY(-6px);
+  border-color:rgba(255,255,255,.95);
+  box-shadow:0 28px 54px -26px rgba(28,54,60,.7);
+}
+.find:has(.pcard:hover) .badge,
+.find:has(.shellbtn:hover) .badge{transform:rotate(-12deg) scale(1.12)}
+
+/* ---------- toolkit ---------- */
+.tide{grid-column:2;display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;max-width:460px}
+.tide span{
+  font-size:11px;letter-spacing:.1em;padding:7px 14px;border-radius:100px;
+  background:rgba(255,250,240,.55);border:1px solid rgba(120,95,60,.2);color:var(--ink-soft);
+  transition:transform .4s var(--ease),background .4s var(--ease),color .4s var(--ease);
+}
+.tide span:hover{transform:translateY(-3px);background:rgba(255,252,246,.9);color:var(--ink)}
+
+/* ---------- contact ---------- */
+.bottle{
+  display:inline-flex;align-items:center;gap:14px;margin-top:28px;
+  padding:15px 24px;border-radius:100px;text-decoration:none;
+  background:var(--ink);color:#fff;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease);
+  box-shadow:0 10px 26px -14px rgba(20,40,45,.9);
+}
+.bottle:hover{transform:translateY(-3px);box-shadow:0 18px 34px -16px rgba(20,40,45,.95)}
+.links{display:flex;gap:26px;margin-top:34px}
+.links a{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;transition:color .3s}
+.links a:hover{color:var(--ink)}
+
+/* ---------- scroll hint ---------- */
+.hint{
+  position:fixed;left:24px;bottom:34px;z-index:20;
+  text-align:center;transition:opacity .6s;
+}
+.hint .txt{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);writing-mode:vertical-rl;margin-bottom:8px}
+.hint .bar{width:1px;height:34px;background:rgba(90,110,115,.35);margin:0 auto;overflow:hidden;position:relative}
+.hint .bar::after{content:"";position:absolute;inset:0;background:var(--ink);animation:drip 2.4s var(--ease) infinite}
+@keyframes drip{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+.hint.gone{opacity:0;pointer-events:none}
+
+/* ---------- project drawer ---------- */
+#scrim{
+  position:fixed;inset:0;z-index:40;background:rgba(22,44,50,.42);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .5s var(--ease);
+}
+#scrim.open{opacity:1;pointer-events:auto}
+#drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(520px,92vw);z-index:41;
+  background:linear-gradient(180deg,#fffaf0,#f7ecd8);
+  box-shadow:-30px 0 70px -30px rgba(30,50,55,.6);
+  transform:translateX(102%);transition:transform .62s var(--ease);
+  padding:80px 52px;overflow-y:auto;
+}
+#drawer.open{transform:none}
+#drawer .eyebrow{margin-bottom:14px}
+#drawer h2{margin-bottom:18px}
+#drawer p{font-size:15px;line-height:1.8;color:var(--ink-soft);margin-bottom:18px}
+#drawer ul{list-style:none;margin:22px 0}
+#drawer li{font-size:14px;line-height:1.7;color:var(--ink-soft);padding-left:20px;position:relative;margin-bottom:9px}
+#drawer li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:rgba(60,140,150,.5)}
+#close{
+  position:absolute;top:26px;right:30px;width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(120,95,60,.28);background:rgba(255,255,255,.5);cursor:pointer;
+  display:grid;place-items:center;color:var(--ink);transition:transform .4s var(--ease),background .4s}
+#close:hover{transform:rotate(90deg);background:#fff}
+#close svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  :root{--trail:160px}
+  #work{padding:130px 0 140px var(--trail)}
+  .shellbtn{width:40px;height:40px}
+}
+@media (max-width:820px){
+  :root{--trail:0px}
+  header{padding:20px 22px}
+  .topnav{display:none}
+  .hint{left:20px}
+  section{grid-template-columns:1fr;padding:110px 22px 90px;align-content:center}
+  .work-head,.tide{grid-column:1}
+  .work-head,.beachcomb{width:auto}
+  #work{padding:110px 16px 90px}
+  /* no room for a gutter: the shell survives as the badge on the card */
+  .find{grid-template-columns:1fr;margin-bottom:34px}
+  .marker,#combtrail{display:none}
+  .thumb{height:170px;flex-basis:170px}
+  .body{padding-right:0}
+  .lede{max-width:none}
+  #trail{display:none}
+  #drawer{padding:74px 30px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rev{opacity:1;transform:none;transition:none}
+  .more,.pcard,.shellbtn,#combtrail path,#combcliprect{transition:none}
+  .hint .bar::after{animation:none}
+  .print{animation:press .3s forwards, lift 3s linear forwards}
+}
+</style>
+</head>
+<body>
+
+<!-- the shell artwork, defined once and referenced by every instance -->
+<svg id="shellart" aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+  <symbol id="sh-scallop" viewBox="0 0 829 721" fill="none">
+<path d="M167.94 537.506C43.0324 447.823 -52.9521 338.791 52.4394 269.831C50.817 210.613 79.2091 96.0715 205.757 111.647C228.47 66.219 295.313 -13.9281 380.976 28.9033C413.424 7.0011 492.922 -14.9004 561.063 53.2406C613.791 55.6737 722.655 86.8229 736.283 191.955C775.221 221.159 841.415 298.061 794.689 372.042C843.496 428.007 851.27 537.638 595.134 606.959C597.567 619.127 590.267 707.881 565.93 712.748C541.594 717.616 371.242 671.377 349.339 666.51C326.802 661.501 196.022 649.474 159.518 632.439C131.028 619.144 150.406 570.026 167.94 537.506Z" fill="#FAB46D"/>
+<path d="M794.69 372.042C855.53 441.806 852.609 594.961 354.207 649.474C187.91 565.92 -105.258 373.016 52.4394 269.831M354.207 649.474C288.012 606.641 125.448 378.532 52.4394 269.831M354.207 649.474C272.437 526.819 221.169 239.816 205.757 111.647M354.207 649.474C354.207 347.706 372.053 110.023 380.976 28.9033M354.207 649.474C455.445 462.572 534.294 174.109 561.063 53.2406M354.207 649.474C570.311 454.784 698.968 263.341 736.283 191.955M354.207 649.474C628.717 540.447 762.241 419.092 794.69 372.042M52.4394 269.831C50.817 210.613 79.2091 96.0715 205.757 111.647M205.757 111.647C228.47 66.219 295.313 -13.9281 380.976 28.9033M380.976 28.9033C413.424 7.0011 492.922 -14.9004 561.063 53.2406M561.063 53.2406C613.791 55.6737 722.655 86.8229 736.283 191.955M736.283 191.955C775.221 221.159 841.415 298.061 794.69 372.042M169.253 535.095C151.406 567.543 130.315 618.811 159.518 632.439C196.022 649.474 326.802 661.501 349.339 666.51C371.242 671.377 541.594 717.616 565.93 712.748C590.267 707.881 597.567 619.127 595.134 606.959" stroke="#D48B41" stroke-width="14.6016"/>
+  </symbol>
+  <symbol id="sh-star" viewBox="0 0 811 791" fill="none">
+<path d="M195.245 480.416C134.966 406.072 -1.6663 365.885 6.37091 311.635C22.4453 265.42 243.469 337.756 301.738 221.216C343.981 136.73 323.841 0.192712 376.083 6.22062C428.325 12.2485 460.473 229.253 552.901 249.346C685.515 265.42 783.971 225.234 802.055 261.401C826.167 309.625 621.218 369.905 645.329 516.584C669.441 663.263 751.822 711.485 715.655 741.625C679.487 771.764 534.818 653.216 440.38 641.161C345.943 629.105 251.506 813.96 189.218 779.802C126.929 745.643 255.524 554.761 195.245 480.416Z" fill="#E6564B" stroke="#BC4239" stroke-width="12.0558"/>
+<ellipse cx="381.771" cy="90.4186" rx="14.0651" ry="12.0558" fill="#F28B8C"/>
+<ellipse cx="373.734" cy="38.1766" rx="10.0465" ry="8.03721" fill="#F28B8C"/>
+<ellipse cx="387.799" cy="138.642" rx="20.093" ry="16.0744" fill="#F28B8C"/>
+<ellipse cx="393.827" cy="204.949" rx="26.1209" ry="22.1023" fill="#F28B8C"/>
+<ellipse cx="413.919" cy="393.823" rx="26.1209" ry="22.1023" fill="#8F3439"/>
+<ellipse cx="403.873" cy="275.274" rx="32.1488" ry="28.1302" fill="#F28B8C"/>
+<ellipse cx="700.351" cy="302.186" rx="14.0651" ry="12.0558" transform="rotate(81.3825 700.351 302.186)" fill="#F28B8C"/>
+<ellipse cx="750.799" cy="286.412" rx="10.0465" ry="8.03721" transform="rotate(81.3825 750.799 286.412)" fill="#F28B8C"/>
+<ellipse cx="653.575" cy="315.372" rx="20.093" ry="16.0744" transform="rotate(81.3825 653.575 315.372)" fill="#F28B8C"/>
+<ellipse cx="588.92" cy="331.267" rx="26.1209" ry="22.1023" transform="rotate(81.3825 588.92 331.267)" fill="#F28B8C"/>
+<ellipse cx="520.894" cy="351.737" rx="32.1488" ry="28.1302" transform="rotate(81.3825 520.894 351.737)" fill="#F28B8C"/>
+<ellipse cx="621.945" cy="640.972" rx="14.0651" ry="12.0558" transform="rotate(145.308 621.945 640.972)" fill="#F28B8C"/>
+<ellipse cx="658.288" cy="679.35" rx="10.0465" ry="8.03721" transform="rotate(145.308 658.288 679.35)" fill="#F28B8C"/>
+<ellipse cx="589.542" cy="604.752" rx="20.093" ry="16.0744" transform="rotate(145.308 589.542 604.752)" fill="#F28B8C"/>
+<ellipse cx="546.846" cy="553.664" rx="26.1209" ry="22.1023" transform="rotate(145.308 546.846 553.664)" fill="#F28B8C"/>
+<ellipse cx="498.559" cy="501.558" rx="32.1488" ry="28.1302" transform="rotate(145.308 498.559 501.558)" fill="#F28B8C"/>
+<ellipse cx="255.763" cy="657.121" rx="14.0651" ry="12.0558" transform="rotate(-139.384 255.763 657.121)" fill="#F28B8C"/>
+<ellipse cx="227.857" cy="702.01" rx="10.0465" ry="8.03721" transform="rotate(-139.384 227.857 702.01)" fill="#F28B8C"/>
+<ellipse cx="282.581" cy="616.593" rx="20.093" ry="16.0744" transform="rotate(-139.384 282.581 616.593)" fill="#F28B8C"/>
+<ellipse cx="321.17" cy="562.334" rx="26.1209" ry="22.1023" transform="rotate(-139.384 321.17 562.334)" fill="#F28B8C"/>
+<ellipse cx="359.327" cy="502.412" rx="32.1488" ry="28.1302" transform="rotate(-139.384 359.327 502.412)" fill="#F28B8C"/>
+<ellipse cx="121.2" cy="341.928" rx="14.0651" ry="12.0558" transform="rotate(-74.1114 121.2 341.928)" fill="#F28B8C"/>
+<ellipse cx="68.7534" cy="335.361" rx="10.0465" ry="8.03721" transform="rotate(-74.1114 68.7534 335.361)" fill="#F28B8C"/>
+<ellipse cx="169.23" cy="349.336" rx="20.093" ry="16.0744" transform="rotate(-74.1114 169.23 349.336)" fill="#F28B8C"/>
+<ellipse cx="234.656" cy="361.688" rx="26.1209" ry="22.1023" transform="rotate(-74.1114 234.656 361.688)" fill="#F28B8C"/>
+<ellipse cx="305.045" cy="371.281" rx="32.1488" ry="28.1302" transform="rotate(-74.1114 305.045 371.281)" fill="#F28B8C"/>
+  </symbol>
+  <symbol id="sh-spiral" viewBox="0 0 848 813" fill="none">
+<path d="M816.161 691.228C663.125 758.471 469.426 651.594 391.706 589.75C-75.3188 760.101 -118.625 47.2601 396.842 62.8651C809.216 75.3491 848.211 486.975 816.161 691.228Z" fill="#FAB1B1" stroke="#F28B8C" stroke-width="12.889"/>
+<path d="M392.366 593.996C428.276 540.594 483.82 404.577 418.718 287.73C353.617 170.883 234.397 178.709 171.374 234.836C106.131 292.938 82.7482 392.076 160.42 458.276C243.141 514.996 298.871 425.906 292.279 383.451C288.653 360.101 263.759 311.793 208.569 320.364C153.378 328.935 166.507 383.742 178.785 394.554C191.377 405.642 221.095 401.028 217.798 379.801C215.161 362.819 203.181 360.332 197.52 361.211" stroke="#F28B8C" stroke-width="12.889"/>
+  </symbol>
+</svg>
+
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="vign" aria-hidden="true"></div>
+<div id="prints" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="#home">breanna thayillam.</a>
+  <nav class="topnav">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hint" id="hint">
+  <div class="txt">Scroll to walk</div>
+  <div class="bar"></div>
+</div>
+
+<main>
+  <div id="trail" aria-hidden="true"></div>
+
+  <section id="home">
+    <div></div>
+    <div class="body">
+      <h1 class="rev">hello! i'm breanna</h1>
+      <p class="lede rev">I build software the way you'd walk a shoreline — slowly, noticing what the tide leaves behind, keeping what's worth keeping.</p>
+      <a class="cta rev" href="#about">Start your walk <span class="arrow"></span></a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div></div>
+    <div class="body">
+      <p class="eyebrow rev">About</p>
+      <h2 class="rev">Somewhere between<br>logic and low tide</h2>
+      <p class="lede rev">A computer science student and engineer who cares about the seams — the places where a system meets a person. I like problems that need both a whiteboard and a conversation.</p>
+      <p class="lede rev">Currently building at Cerenity Innovation, and always collecting things that wash up: half-finished side projects, good documentation, better questions.</p>
+      <a class="cta rev" href="#work">See what I've found <span class="arrow"></span></a>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="work-head rev">
+      <p class="eyebrow">Selected Work</p>
+      <h2>Things the tide<br>brought in</h2>
+      <p class="lede">Follow the shells. Hover either the shell or its card to turn it over, click to read the whole story.</p>
+    </div>
+    <div class="beachcomb" id="beachcomb">
+      <svg id="combtrail" aria-hidden="true"></svg>
+    </div>
+  </section>
+
+  <section id="toolkit">
+    <div></div>
+    <div class="body">
+      <p class="eyebrow rev">Toolkit</p>
+      <h2 class="rev">What's in<br>the bucket</h2>
+      <p class="lede rev">The tools I reach for most, and the ones I'm still learning to use well.</p>
+    </div>
+    <div class="tide rev" id="tide"></div>
+  </section>
+
+  <section id="contact">
+    <div></div>
+    <div class="body">
+      <p class="eyebrow rev">Contact</p>
+      <h2 class="rev">Send a message<br>in a bottle</h2>
+      <p class="lede rev">Working on something interesting, or just want to compare notes? I read everything that washes up.</p>
+      <a class="bottle rev" href="mailto:info@cerenityinnovation.com">Get in touch <span>→</span></a>
+      <div class="links rev">
+        <a href="#" target="_blank" rel="noopener">GitHub</a>
+        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" target="_blank" rel="noopener">Résumé</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="scrim"></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle" aria-hidden="true">
+  <button id="close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div id="dbody"></div>
+</aside>
+
+<!-- reusable footprint shape -->
+<template id="foot">
+  <svg viewBox="0 0 30 46" aria-hidden="true">
+    <g fill="#a8825282">
+      <path d="M15.2 12.5c5.4 0 8.6 4 8.6 9.1 0 3.7-2.3 6-2.3 9.4 0 3.9 1.6 5.6 1.6 8.3 0 3.4-3.4 5.4-7.9 5.4s-7.9-2-7.9-5.4c0-2.7 1.6-4.4 1.6-8.3 0-3.4-2.3-5.7-2.3-9.4 0-5.1 3.2-9.1 8.6-9.1z"/>
+      <ellipse cx="9.4" cy="7.8" rx="2.9" ry="3.4"/>
+      <ellipse cx="15.4" cy="5.2" rx="2.5" ry="3"/>
+      <ellipse cx="20.4" cy="6.4" rx="2.2" ry="2.7"/>
+      <ellipse cx="24.2" cy="9.4" rx="1.9" ry="2.3"/>
+      <ellipse cx="26.9" cy="13" rx="1.6" ry="2"/>
+    </g>
+  </svg>
+</template>
+
+<script>
+(() => {
+'use strict';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* =========================================================
+   1. THE SEA — layered vertical waves on canvas
+   ========================================================= */
+const cv  = document.getElementById('sea');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, shoreX = 0, waterW = 0;
+
+/* Water bands, shallow → deep. `f` is how far right of the shoreline the
+   band starts, as a fraction of the water's width, so the sea keeps its
+   proportions at any viewport. `sp` is drift speed in radians/second —
+   deliberately slow: a full excursion takes 20–50 seconds. */
+const BANDS = [
+  { f:.03, af:.085, k:.0094, sp:.30, ph:4.7, col:'#b9e0d8' },
+  { f:.15, af:.080, k:.0077, sp:.24, ph:3.4, col:'#7ac6c1' },
+  { f:.33, af:.075, k:.0061, sp:.19, ph:2.2, col:'#3d9dab' },
+  { f:.56, af:.070, k:.0046, sp:.15, ph:1.1, col:'#19758d' },
+  { f:.82, af:.055, k:.0036, sp:.11, ph:0.0, col:'#0d5266' }
+];
+
+let clock = 0, scrollPhase = 0, surge = 0, surgeTarget = 0, tide = 0;
+
+/* the sea gets the right-hand quarter of the screen */
+function shoreFrac(){ return innerWidth <= 820 ? .80 : innerWidth <= 1080 ? .74 : .755; }
+
+function resize(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  shoreX = W * shoreFrac();
+  waterW = W - shoreX;
+  for (const b of BANDS){
+    b.off = waterW * b.f;
+    b.amp = Math.max(11, Math.min(34, waterW * b.af));
+  }
+  /* Where the dry sand ends: the leading band at its furthest reach — tide
+     fully in, the wave sum at its leftmost, and the wet strip it leaves behind
+     — less a margin. Page content is capped here so nothing sits in water. */
+  const lead = BANDS[0];
+  document.documentElement.style.setProperty('--dry',
+    Math.round(shoreX + lead.off - waterW * .1 - lead.amp * 1.29 - 139 - 40) + 'px');
+  layTrail();
+  if (reduce) draw();
+}
+
+/* How far the swash has run up the beach at height y. A slow travelling
+   envelope, so one stretch of shore is rushing in while another is still
+   draining — the shoreline never surges or recedes all at once. */
+function swash(y){
+  const a = .5 + .5 * Math.sin(y * .0026 - clock * .17 + .8);
+  const b = .5 + .5 * Math.sin(y * .0009 + clock * .11 + 2.9);
+  return .38 + .62 * (a * .65 + b * .35);
+}
+
+/* x position of a band's edge at height y.
+   Four components at non-harmonic wavelength ratios (1 : 1.73 : 0.47 : 3.11)
+   drifting at unrelated speeds and directions — the sum never repeats, so
+   the waterline reads as irregular rather than as a rolling sine. */
+function edge(b, y, extra){
+  const s = clock * b.sp, p = b.ph, w = b.amp;
+  return shoreX + b.off + tide + extra * swash(y)
+    + w * .52 * Math.sin(y * b.k        + s        + scrollPhase       + p)
+    + w * .30 * Math.sin(y * b.k * 1.73 - s * .61  + scrollPhase * .7  + p * 2.1 + 1.7)
+    + w * .34 * Math.sin(y * b.k * 0.47 + s * .37  + scrollPhase * .4  + p * 0.6 + 3.9)
+    + w * .13 * Math.sin(y * b.k * 3.11 - s * .83                      + p * 1.3);
+}
+
+/* leftmost reach of the water, including the thin swash sheet */
+function waterlineAt(y){ return edge(BANDS[0], y, surge * .5 - 34); }
+
+function fillBand(b, extra, color){
+  ctx.beginPath();
+  ctx.moveTo(W, -4);
+  for (let y = -4; y <= H + 4; y += 6) ctx.lineTo(edge(b, y, extra), y);
+  ctx.lineTo(W, H + 4);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function draw(){
+  /* --- dry sand --- */
+  const sand = ctx.createLinearGradient(0, 0, W, H);
+  sand.addColorStop(0,   '#f2dfb9');
+  sand.addColorStop(.45, '#e8cb9c');
+  sand.addColorStop(1,   '#dcb98a');
+  ctx.fillStyle = sand;
+  ctx.fillRect(0, 0, W, H);
+
+  const lead = BANDS[0];
+
+  /* --- wet sand the water has just left --- */
+  ctx.save();
+  ctx.globalAlpha = .55;
+  fillBand(lead, -(88 + surge * 1.5), '#cba473');
+  ctx.globalAlpha = .4;
+  fillBand(lead, -(42 + surge * 1.1), '#bf9564');
+  ctx.restore();
+
+  /* --- the water itself --- */
+  for (const b of BANDS) fillBand(b, surge, b.col);
+
+  /* --- foam edge --- */
+  ctx.save();
+  ctx.beginPath();
+  for (let y = -4; y <= H + 4; y += 5){
+    const x = edge(lead, y, surge);
+    y === -4 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,.92)';
+  ctx.lineWidth = 9; ctx.lineJoin = 'round';
+  ctx.shadowColor = 'rgba(255,255,255,.85)'; ctx.shadowBlur = 16;
+  ctx.stroke();
+  ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke();
+  ctx.restore();
+
+  /* --- swash: the thin sheet sliding up the sand --- */
+  ctx.save();
+  ctx.globalAlpha = .3;
+  ctx.beginPath();
+  ctx.moveTo(0, -4);
+  for (let y = -4; y <= H + 4; y += 6) ctx.lineTo(waterlineAt(y), y);
+  for (let y = H + 4; y >= -4; y -= 6) ctx.lineTo(edge(lead, y, surge), y);
+  ctx.closePath();
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.restore();
+
+  /* --- bubbles riding the foam, thickest where the swash is running --- */
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,.72)';
+  for (let y = 0; y < H; y += 15){
+    const wob = Math.sin(y * .09 + clock * .5) * 13;
+    const r = 1 + (Math.sin(y * 2.7) + 1) * 1.6;
+    ctx.globalAlpha = (.18 + .42 * (Math.sin(y * .21 + clock * .34) + 1) / 2) * swash(y);
+    ctx.beginPath();
+    ctx.arc(edge(lead, y, surge) + 7 + wob, y, r, 0, 6.2832);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  /* --- glints on deep water --- */
+  ctx.save();
+  ctx.globalAlpha = .1;
+  ctx.strokeStyle = '#eafcff'; ctx.lineWidth = 1.4;
+  const b3 = BANDS[3], gap = Math.max(26, waterW * .1);
+  for (let i = 0; i < 4; i++){
+    ctx.beginPath();
+    for (let y = -4; y <= H + 4; y += 10)
+      ctx.lineTo(edge(b3, y, surge) + gap * (i + .5) + Math.sin(y * .02 + i * 2.1 + clock * .2) * 14, y);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* =========================================================
+   2. SCROLL drives the waves
+   ========================================================= */
+let lastY = scrollY, vel = 0;
+addEventListener('scroll', () => {
+  const y = scrollY;
+  vel = vel * .82 + (y - lastY) * .18;
+  lastY = y;
+  surgeTarget = Math.max(surgeTarget, Math.min(Math.abs(vel) * 1.1, 34));
+  document.getElementById('hint').classList.toggle('gone', y > 140);
+}, { passive: true });
+
+let frame = 0;
+function tick(t){
+  clock = t / 1000;
+  /* scroll nudges the waves along their travel, gently */
+  scrollPhase = scrollY * .0009;
+
+  /* surge builds and drains over seconds, not frames */
+  surgeTarget *= .982;
+  surge += (surgeTarget - surge) * .022;
+
+  const doc = Math.max(1, document.body.scrollHeight - innerHeight);
+  const prog = Math.min(scrollY / doc, 1);
+  tide = -waterW * .1 * Math.sin(prog * Math.PI);  /* tide creeps in mid-page, retreats at the end */
+
+  draw();
+  if (++frame % 4 === 0) washPrints();
+  requestAnimationFrame(tick);
+}
+
+/* =========================================================
+   3. FOOTPRINTS behind the cursor
+   ========================================================= */
+const printLayer = document.getElementById('prints');
+const footTpl = document.getElementById('foot');
+let px = null, py = null, side = 1, live = [];
+
+function stamp(x, y, angle){
+  const el = document.createElement('div');
+  el.className = 'print';
+  el._x = x; el._y = y;
+  el.appendChild(footTpl.content.cloneNode(true));
+  /* offset each print to the side of the walking line, like real strides */
+  const nx = Math.cos(angle + Math.PI / 2) * 11 * side;
+  const ny = Math.sin(angle + Math.PI / 2) * 11 * side;
+  el.style.left = (x + nx) + 'px';
+  el.style.top  = (y + ny) + 'px';
+  el.style.setProperty('--t', `rotate(${angle * 180 / Math.PI + 90 + side * 7}deg)`);
+  printLayer.appendChild(el);
+  side *= -1;
+  live.push(el);
+  setTimeout(() => { el.remove(); live = live.filter(n => n !== el); }, 5000);
+  if (live.length > 44) live.shift().remove();
+}
+
+/* sand only — nothing presses into water */
+function onSand(x, y){ return x < waterlineAt(y) - 20; }
+
+addEventListener('pointermove', e => {
+  if (px === null){ px = e.clientX; py = e.clientY; return; }
+  const dx = e.clientX - px, dy = e.clientY - py;
+  const d = Math.hypot(dx, dy);
+  if (d < 54) return;
+  const a = Math.atan2(dy, dx);
+  /* place the print slightly behind the cursor — you leave it as you pass */
+  const fx = e.clientX - Math.cos(a) * 16, fy = e.clientY - Math.sin(a) * 16;
+  px = e.clientX; py = e.clientY;
+  if (!onSand(fx, fy)) return;
+  stamp(fx, fy, a);
+}, { passive: true });
+
+/* an incoming swash erases the prints it reaches */
+function washPrints(){
+  for (let i = live.length - 1; i >= 0; i--){
+    const el = live[i];
+    if (el.classList.contains('wash')) continue;
+    if (!onSand(el._x, el._y)){
+      el.classList.add('wash');
+      setTimeout(() => el.remove(), 900);
+      live.splice(i, 1);
+    }
+  }
+}
+
+/* =========================================================
+   4. The trail already worn into the sand
+   ========================================================= */
+/* The line the walk follows, as a function of page height. Two sines at
+   unrelated wavelengths — long and lazy, with a shorter one riding it. The
+   shell string borrows this same function, so both read as one path. */
+const WANDER = y => Math.sin(y * .0022) * 26 + Math.sin(y * .0071) * 9;
+const STEP0 = 60, STEPY = 78;   /* first print, and the stride between prints */
+const GUTTER = 74;              /* the walk's centreline, from the left edge */
+/* The prints sidestep ±13px every stride, so the walk reads as a wave one
+   stride-pair long. The shell string carries that same short wavelength, or it
+   would drift down the page far straighter than the footprints above it. */
+const RIPPLE = y => Math.sin(y * (Math.PI / STEPY)) * 14;
+/* where the walk pauses for the beachcombing, in page coordinates */
+function combGap(){
+  const work = document.getElementById('work');
+  return [work.offsetTop - 40, work.offsetTop + work.offsetHeight + 10];
+}
+
+function layTrail(){
+  const trail = document.getElementById('trail');
+  trail.innerHTML = '';
+  if (innerWidth <= 820) return;
+  const h = document.querySelector('main').scrollHeight;
+  /* the walk pauses where the beachcombing starts — the shell string picks the
+     line up there and carries it down the page in the prints' place */
+  const [skipA, skipB] = combGap();
+  let s = 1;
+  for (let y = STEP0; y < h - 40; y += STEPY){
+    if (y > skipA && y < skipB){ s *= -1; continue; }
+    const wander = WANDER(y);
+    const step = document.createElement('div');
+    step.className = 'step';
+    step.appendChild(footTpl.content.cloneNode(true));
+    step.style.left = (GUTTER + wander + s * 13) + 'px';
+    step.style.top  = y + 'px';
+    step.style.transform = `rotate(${8 + s * 6 + Math.sin(y * .004) * 10}deg)`;
+    step.style.opacity = .18 + .16 * ((Math.sin(y * .013) + 1) / 2);
+    trail.appendChild(step);
+    s *= -1;
+  }
+}
+
+/* =========================================================
+   5. Shells = projects
+   ========================================================= */
+/* The three shells, cycled down the beach. Each instance is a reference to the
+   artwork in #shellart, so the paths live in the document exactly once. */
+function shell(type){
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sh-${type}"/></svg>`;
+}
+
+/* Placeholder card art: a generated aerial coastline in each project's own
+   duotone. Swap the <svg> for an <img src="..."> screenshot when you have one. */
+function thumb(i, from, to){
+  let bands = '';
+  for (let b = 0; b < 4; b++){
+    const base = 92 + b * 33 + (i % 3) * 8;
+    const amp  = 8 + ((i + b) % 4) * 5;
+    const k    = .017 + ((i * 3 + b) % 5) * .007;
+    const ph   = i * 1.7 + b * 2.3;
+    let d = `M0 240 L0 ${base}`;
+    for (let x = 0; x <= 400; x += 10)
+      d += ` L${x} ${(base + amp * Math.sin(x * k + ph) + amp * .45 * Math.sin(x * k * 2.7 - ph)).toFixed(1)}`;
+    bands += `<path d="${d} L400 240 Z" fill="#fff" opacity="${(.08 + b * .055).toFixed(3)}"/>`;
+  }
+  return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="tg${i}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>
+      <radialGradient id="ts${i}" cx=".74" cy=".2" r=".55">
+        <stop offset="0" stop-color="#fff6e2" stop-opacity=".8"/>
+        <stop offset="1" stop-color="#fff6e2" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="400" height="240" fill="url(#tg${i})"/>
+    <circle cx="292" cy="50" r="24" fill="#fff4d9" opacity=".72"/>
+    <rect width="400" height="240" fill="url(#ts${i})"/>
+    ${bands}</svg>`;
+}
+
+const PROJECTS = [
+  { shell:'scallop', title:'Tidewater', meta:'Full-stack · React, Node, Postgres', from:'#2b7f96', to:'#8fd3c8',
+    blurb:'A scheduling platform that replaced three spreadsheets and a group chat for a 40-person volunteer team.',
+    body:'Tidewater started as a favour and turned into the thing I learned the most from. The hard part was never the calendar — it was modelling the messy human rules people had been holding in their heads.',
+    points:['Weekly coordination fell from ~6 hours to under 30 minutes','A conflict model for overlapping shift claims','40 active users, still running two years on'] },
+  { shell:'star', title:'Driftline', meta:'Machine learning · Python, PyTorch', from:'#1f5f7a', to:'#63b0c4',
+    blurb:'A model that predicts where marine debris will wash ashore, trained on public current and wind data.',
+    body:'Part coursework, part obsession. I wanted to know whether a small model on open data could beat a naive drift baseline — it could, but only once I stopped treating wind and current as independent.',
+    points:['18% better than naive drift on held-out coastline','Full pipeline: ingest, clean, features, eval','Wrote the postmortem on what it still gets wrong'] },
+  { shell:'scallop', title:'Message in a Bottle', meta:'Design + front-end · TypeScript, Canvas', from:'#c47a4a', to:'#f5cf9c',
+    blurb:'An anonymous letter exchange where notes take a real day to arrive. Slowness as a feature.',
+    body:'Every messaging product optimises for instant. I wanted to see what changes when it can\'t be. People wrote longer. They asked better questions. They came back.',
+    points:['A deliberate 24-hour delay, shown as a drift animation','Moderation queue designed before launch, not after','~1,200 letters exchanged in the first month'] },
+  { shell:'star', title:'Lighthouse', meta:'Developer tools · Go, CLI', from:'#3d6b7d', to:'#e0b077',
+    blurb:'A CLI that watches a codebase and tells you which files are drifting away from their tests.',
+    body:'Built for myself after one too many "this file has no coverage and nobody noticed" moments. It maps source files to test files, watches change frequency, and quietly flags the ones going dark.',
+    points:['Single binary, zero config, any Git repo','Ranks risk by change frequency × coverage gap','Used across three of my projects and two friends\''] },
+  { shell:'scallop', title:'Saltmarsh', meta:'Data visualisation · D3, Observable', from:'#4a7a5e', to:'#b8d492',
+    blurb:'An interactive map of sixty years of coastal wetland loss, built from public survey data.',
+    body:'The data existed; nobody could see it. I spent longer on the legend than the map — getting people to read a rate of change rather than a snapshot turned out to be the whole design problem.',
+    points:['Six decades of survey data, normalised into one timeline','Scrubbing timeline with per-parish breakdown','Picked up by two local conservation groups'] },
+  { shell:'star', title:'Beachcomber', meta:'Mobile · Swift, SwiftUI', from:'#a05f6b', to:'#f0b3a4',
+    blurb:'A field notebook for logging what you find on a walk — photo, tide, place, and a guess at the species.',
+    body:'An excuse to learn SwiftUI properly, and to stop losing the notes I was keeping in my camera roll. Offline-first, because the beaches worth walking rarely have signal.',
+    points:['Offline-first with conflict-free sync on reconnect','Auto-tags each find with tide state and location','On-device species suggestions from a small Core ML model'] }
+];
+
+const TOOLS = ['Python','TypeScript','React','Node.js','Go','Swift','PostgreSQL','PyTorch','D3','Figma','Docker','Git','AWS','Accessibility'];
+
+document.getElementById('tide').innerHTML = TOOLS.map(t => `<span>${t}</span>`).join('');
+
+/* ---- build the beachcomb: one shell + one card per project ---- */
+const comb = document.getElementById('beachcomb');
+const combTrail = document.getElementById('combtrail');
+
+PROJECTS.forEach((p, i) => {
+  const find = document.createElement('div');
+  find.className = 'find rev';
+  find.innerHTML = `
+    <div class="marker">
+      <button class="shellbtn" aria-label="${p.title} — open case study">${shell(p.shell)}</button>
+    </div>
+    <article class="pcard" tabindex="0" role="button" aria-label="${p.title} — open case study">
+      <div class="thumb">${thumb(i, p.from, p.to)}<div class="badge">${shell(p.shell)}</div></div>
+      <div class="cbody">
+        <span class="meta">${p.meta}</span>
+        <h3>${p.title}</h3>
+        <p class="short">${p.blurb}</p>
+        <div class="more"><div>
+          <ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>
+          <span class="open">Open case study <span></span></span>
+        </div></div>
+      </div>
+    </article>`;
+
+  /* left is set in drawTrail — each shell is placed on the wave at its own
+     height, so the string always runs through the middle of them */
+  const btn = find.querySelector('.shellbtn');
+  btn.querySelector('svg').style.transform = `rotate(${Math.sin(i * 2.4) * 14}deg)`;
+
+  const card = find.querySelector('.pcard');
+  [btn, card].forEach(el => el.addEventListener('click', () => open(i)));
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(i); }
+  });
+
+  /* :has() handles the card/shell pairing; only the trail needs JS, since the
+     path lives in a sibling SVG no selector can reach from here */
+  find.addEventListener('pointerenter', () => lightUp(i, true));
+  find.addEventListener('pointerleave', () => lightUp(i, false));
+  find.addEventListener('focusin',  () => lightUp(i, true));
+  find.addEventListener('focusout', () => lightUp(i, false));
+
+  comb.appendChild(find);
+});
+
+/* ---- the string the shells hang on ---- */
+/* One path, sampled straight off WANDER — the same wave the footprints walk.
+   Its baseline eases out of the print gutter at the top and back into it at the
+   bottom, so the string reads as the walk continuing by other means. Because x
+   depends only on y, no amount of card expanding can bend it: the shells simply
+   slide along a line that was already there. */
+combTrail.innerHTML =
+  `<defs><clipPath id="combclip" clipPathUnits="userSpaceOnUse">
+     <rect id="combcliprect" x="-6000" width="12000" y="0" height="0"/>
+   </clipPath></defs>
+   <path class="strand"></path>
+   <path class="strand lit" clip-path="url(#combclip)"></path>`;
+const strands = [...combTrail.querySelectorAll('.strand')];
+const clipRect = combTrail.querySelector('#combcliprect');
+
+let shellY = [];         /* shell centres in comb space, measured at rest */
+let held = false, holdT = 0;
+
+function drawTrail(force){
+  if (innerWidth <= 820) return;
+  const box = comb.getBoundingClientRect();
+  if (!box.height) return;
+  const mainBox = document.querySelector('main').getBoundingClientRect();
+  const originX = box.left - mainBox.left;   /* comb's page position */
+  const originY = box.top  - mainBox.top;
+  combTrail.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+
+  /* the walk's own line, expressed in comb space — the shells are strung along
+     exactly this, so the string is the footprints' wave carried on */
+  const gutter = GUTTER - originX;
+  const walk = y => gutter + WANDER(y) + RIPPLE(y);
+
+  /* thread every shell onto it at its own height (read, then write —
+     interleaving the two would force a reflow per shell) */
+  const btns = [...comb.querySelectorAll('.shellbtn')];
+  if (!btns.length) return;
+  const rects = btns.map(b => b.getBoundingClientRect());
+  const ys = rects.map(r => r.top - box.top + r.height / 2);
+  btns.forEach((b, i) => {
+    b.style.left = (walk(originY + ys[i]) - rects[i].width / 2).toFixed(1) + 'px';
+  });
+
+  /* while a find is open the path is left exactly as it was */
+  if (held && !force && strands[0].getAttribute('d')) return;
+  shellY = ys;
+
+  /* run from just below the last footprint to just above the next one */
+  const [skipA, skipB] = combGap();
+  const top = STEP0 + Math.floor((skipA - STEP0) / STEPY) * STEPY + 34 - originY;
+  const bot = STEP0 + Math.ceil((skipB - STEP0) / STEPY) * STEPY - 34 - originY;
+
+  let d = '';
+  for (let y = top; y < bot + 6; y += 6){
+    const at = Math.min(y, bot);
+    d += `${d ? 'L' : 'M'}${walk(originY + at).toFixed(1)} ${at.toFixed(1)}`;
+  }
+  strands.forEach(s => s.setAttribute('d', d));
+}
+
+/* Hovering darkens a stretch of the string — from the shell before to the shell
+   after — by sliding a clip window over the second copy of the path. The line
+   itself is frozen until the card has finished collapsing again. */
+function lightUp(i, on){
+  clearTimeout(holdT);
+  combTrail.classList.toggle('on', on);
+  if (!on){ holdT = setTimeout(() => { held = false; drawTrail(true); }, 640); return; }
+  held = true;
+  if (!shellY.length) return;
+  const a = i > 0 ? shellY[i - 1] : shellY[0] - 300;
+  const b = i < shellY.length - 1 ? shellY[i + 1] : shellY[i] + 300;
+  clipRect.setAttribute('y', (a - 8).toFixed(1));
+  clipRect.setAttribute('height', (b - a + 16).toFixed(1));
+}
+
+/* fires through the whole expand transition, so the shells keep riding the wave */
+new ResizeObserver(() => drawTrail()).observe(comb);
+addEventListener('resize', () => drawTrail(true));
+addEventListener('load', () => drawTrail(true));
+drawTrail(true);
+
+/* =========================================================
+   6. Drawer
+   ========================================================= */
+const scrim = document.getElementById('scrim');
+const drawer = document.getElementById('drawer');
+const dbody = document.getElementById('dbody');
+let lastFocus = null;
+
+function open(i){
+  const p = PROJECTS[i];
+  lastFocus = document.activeElement;
+  dbody.innerHTML = `<p class="eyebrow">${p.meta}</p>
+    <h2 id="dtitle">${p.title}</h2>
+    <p>${p.blurb}</p>
+    <p>${p.body}</p>
+    <ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>
+    <a class="cta" href="#" onclick="return false">View case study <span class="arrow"></span></a>`;
+  scrim.classList.add('open');
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden', 'false');
+  document.getElementById('close').focus();
+}
+function shut(){
+  scrim.classList.remove('open');
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  if (lastFocus) lastFocus.focus();
+}
+scrim.addEventListener('click', shut);
+document.getElementById('close').addEventListener('click', shut);
+addEventListener('keydown', e => { if (e.key === 'Escape') shut(); });
+
+/* =========================================================
+   7. Reveals + active section
+   ========================================================= */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .18, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+/* =========================================================
+   go
+   ========================================================= */
+addEventListener('resize', resize);
+resize();
+if (reduce){ draw(); } else { requestAnimationFrame(tick); }
+addEventListener('load', layTrail);
+})();
+</script>
+</body>
+</html>
