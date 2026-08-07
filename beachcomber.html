@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beachcomber — Breanna Thayillam</title>
+<meta name="description" content="Beachcomber — a UI/UX case study by Breanna Thayillam.">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Breanna Thayillam">
+<meta property="og:url" content="https://breannat12.github.io/github.io/beachcomber.html">
+<meta property="og:title" content="Beachcomber — Breanna Thayillam">
+<meta property="og:description" content="Beachcomber — a UI/UX case study by Breanna Thayillam.">
+<meta property="og:image" content="https://breannat12.github.io/github.io/pictures/portfolioThumbnail.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/case.css">
+</head>
+<body>
+
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="vign" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="index.html#home">breanna thayillam.</a>
+  <nav class="topnav">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#home">About</a>
+    <a href="index.html#toolkit">Toolkit</a>
+  </nav>
+</header>
+
+<main>
+  <article class="pane">
+    <a class="back" href="index.html#work" aria-label="Back to the beachcomb"><span class="arrow"></span></a>
+
+    <h1 class="rev">Beachcomber</h1>
+    <p class="lede rev">A field notebook for logging what you find on a walk — photo, tide, place, and a guess at the species.</p>
+
+    <p class="tools rev">Swift <i>·</i> SwiftUI <i>·</i> Core ML <i>·</i> Offline-first</p>
+
+    <div class="rule"></div>
+
+    <section class="rev">
+      <h2>The story</h2>
+      <p class="body">An excuse to learn SwiftUI properly, and to stop losing the notes I was keeping in my camera roll. Offline-first, because the beaches worth walking rarely have signal.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section class="rev">
+      <h2>Highlights</h2>
+      <ul class="points">
+        <li>Offline-first with conflict-free sync on reconnect</li>
+        <li>Auto-tags each find with tide state and location</li>
+        <li>On-device species suggestions from a small Core ML model</li>
+      </ul>
+    </section>
+
+    <!-- SCREENS — drop image paths in here and the carousel mounts itself.
+         Copy one .slide per screen and one .dot per screen, keeping the
+         counts equal; the first dot carries class="on".
+    <div class="rule"></div>
+    <section class="rev">
+      <h2>Screens</h2>
+      <div class="gal">
+        <div class="stage">
+          <div class="track">
+            <div class="slide"><img src="pictures/beachcomber/beachcomber1.png" alt="Beachcomber — screen 1" loading="lazy"></div>
+          </div>
+          <button class="gnav prev" type="button" aria-label="Previous screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="gnav next" type="button" aria-label="Next screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="dots"><button class="dot on" type="button" aria-label="Screen 1"></button></div>
+        <p class="galcap"></p>
+      </div>
+    </section>
+    -->
+
+    <button class="totop" type="button" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      Back to top
+    </button>
+  </article>
+</main>
+
+<script src="assets/case.js"></script>
+</body>
+</html>

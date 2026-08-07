@@ -1,0 +1,340 @@
+/* ============================================================
+   CASE STUDY PAGE — the same shoreline as the home page, with
+   every word of the write-up floating on one pane of glass.
+   Shared by voltify.html, beachcomber.html, and any case page
+   added later: markup in the page, everything visual in here.
+   ============================================================ */
+
+:root{
+  --ink:        #2c3a40;
+  --ink-soft:   #5f6f74;
+  --ink-faint:  #8b9a9d;
+
+  /* the two accents the page is titled in, both lifted off the beach itself:
+     the deep water for a category, the wet sand for a subcategory */
+  --sea:        #0e5468;
+  --sea-mid:    #19758d;
+  --sand-deep:  #8a4a20;
+
+  --script: 'Montserrat',var(--sans);
+  --logo: 'Snell Roundhand','Brush Script MT','Segoe Script','Bradley Hand',cursive;
+  --sans: 'Avenir Next','Avenir','Helvetica Neue',system-ui,-apple-system,sans-serif;
+
+  --ease: cubic-bezier(.22,.8,.28,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:#e8cb9c;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- the beach, exactly as on the home page ---------- */
+#sea{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+#grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+}
+#vign{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 80% at 18% 40%, rgba(255,246,228,.34), rgba(255,246,228,0) 62%);
+}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:22;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 34px;
+  background:rgba(255,250,240,.96);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(120,95,60,.16);
+  box-shadow:0 6px 20px -14px rgba(60,45,25,.5);
+}
+.logo{font-family:var(--logo);font-size:34px;line-height:1;color:var(--ink);text-decoration:none}
+.topnav{display:flex;gap:30px}
+.topnav a{
+  font-size:10.5px;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;opacity:.72;position:relative;padding-bottom:3px;
+}
+.topnav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:currentColor;transition:right .4s var(--ease)}
+.topnav a:hover{opacity:1}
+.topnav a:hover::after{right:0}
+
+/* ---------- the glass slab everything sits on ---------- */
+main{position:relative;z-index:10;padding:132px 34px 90px}
+
+/* ---- PANE WIDTH — the one number that sets how wide the write-up runs ---- */
+.pane{
+  --pad-x:clamp(26px,4.4vw,64px);   /* the pane's own side padding, so a wide
+                                       element can reach back out through it */
+  position:relative;                /* the back arrow is pinned to this corner */
+  width:min(980px,100%);margin:0 auto;
+  border-radius:28px;padding:54px var(--pad-x) 58px;
+  /* white enough to read a page of body copy on, even over deep water */
+  background:linear-gradient(150deg, rgba(255,255,255,.76), rgba(255,250,242,.65));
+  backdrop-filter:blur(26px) saturate(150%);
+  -webkit-backdrop-filter:blur(26px) saturate(150%);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 30px 70px -40px rgba(24,48,54,.7), inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* back to the beachcomb — the arrow alone, tucked into the pane's top left
+   corner so it costs the write-up no vertical room at all */
+.back{
+  position:absolute;top:20px;left:20px;
+  display:inline-flex;align-items:center;padding:8px;   /* padding is the tap target */
+  color:var(--ink);text-decoration:none;opacity:.7;
+  transition:opacity .35s var(--ease),transform .35s var(--ease);
+}
+/* just a chevron: two borders on a square, turned a quarter over */
+.back .arrow{
+  display:block;width:12px;height:12px;
+  border-left:1.7px solid currentColor;border-top:1.7px solid currentColor;
+  transform:rotate(-45deg);
+}
+.back:hover{opacity:1;transform:translateX(-3px)}
+.back:focus-visible{outline:2px solid var(--sea);outline-offset:4px;border-radius:4px}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:currentColor;opacity:.6}
+h1{font-family:var(--script);font-weight:500;font-size:clamp(34px,4.4vw,54px);line-height:1.08;letter-spacing:-.015em}
+
+/* ---- the two title ranks ----
+   h2 is a category — Research, Design process, Outcomes — in deep water blue,
+   with a short rule under it. h3 is a subcategory inside one, in wet sand. */
+h2{
+  font-family:var(--script);font-weight:600;
+  font-size:clamp(23px,2.7vw,31px);line-height:1.18;letter-spacing:-.012em;
+  color:var(--sea);margin-bottom:16px;
+}
+h2::after{content:"";display:block;width:52px;height:2px;margin-top:12px;background:var(--sea-mid);opacity:.55}
+h3{
+  font-family:var(--script);font-weight:600;
+  font-size:clamp(16px,1.7vw,19px);line-height:1.25;letter-spacing:.005em;
+  color:var(--sand-deep);margin-bottom:12px;
+}
+/* a subcategory sits under its category, not beside it */
+.sub{margin-top:34px}
+
+.lede{margin-top:22px;font-size:17px;line-height:1.75;color:var(--ink-soft)}
+p.body{margin-top:16px;font-size:15px;line-height:1.85;color:var(--ink-soft)}
+
+/* a hairline between the chapters of the page */
+.rule{height:1px;background:rgba(120,95,60,.22);margin:44px 0}
+
+/* the hackathon the project was built for, directly under the title */
+.award{
+  margin-top:14px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--sand-deep);
+}
+
+/* the run of tools under the title — a line of text, not a row of pills */
+.tools{
+  margin-top:20px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--sea-mid);
+}
+.tools i{font-style:normal;opacity:.5;margin:0 8px}
+
+/* the hero shot, if the project ships one */
+.cover{
+  margin-top:34px;border-radius:16px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 20px 44px -26px rgba(24,48,54,.75);
+  background:rgba(255,255,255,.35);
+}
+.cover img{width:100%;height:auto;display:block}
+
+/* ---------- highlights ---------- */
+.points{list-style:none;margin-top:6px}
+.points li{position:relative;padding-left:22px;font-size:14.5px;line-height:1.7;color:var(--ink-soft);margin-bottom:12px}
+.points li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:rgba(60,140,150,.55)}
+.points li strong{color:var(--ink);font-weight:600}
+
+/* a pulled-out question or claim — the design challenge, the one-line insight */
+.callout{
+  margin-top:26px;padding:24px 28px;border-radius:16px;
+  background:rgba(255, 255, 255, 0.50);
+  border:1px solid rgba(255,255,255,.55);
+  border-left:3px solid rgba(60,140,150,.55);
+}
+.callout .label{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--sand-deep);opacity:.95;margin-bottom:8px}
+.callout p{font-family:var(--script);font-weight:500;font-size:clamp(17px,1.9vw,21px);line-height:1.4;color:var(--ink)}
+
+/* observation → opportunity, and any other two-column reading */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin-top:10px}
+.grid2 .head{
+  font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--sea-mid);
+  padding-bottom:10px;padding-top:20px;border-bottom:1px solid rgba(120,95,60,.22);
+}
+.grid2 .cell{
+  font-size:14px;line-height:1.6;color:var(--ink-soft);
+  padding:14px 0;border-bottom:1px solid rgba(120,95,60,.13);
+}
+.grid2 .cell.b{color:var(--ink)}
+
+/* the journey, as one line of steps — each a shade deeper than the last, so
+   the walk from shallow water to deep reads as progress through the product */
+.journey{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:14px;
+  font-size:15px;font-weight:600;letter-spacing:.005em;line-height:1.5;
+}
+.journey i{font-style:normal;font-weight:400;color:var(--ink-faint);opacity:.8}
+.journey span:nth-of-type(1){color:#5cb7b2}
+.journey span:nth-of-type(2){color:#3d9dab}
+.journey span:nth-of-type(3){color:#2a8698}
+.journey span:nth-of-type(4){color:#1b6f87}
+.journey span:nth-of-type(5){color:#125c74}
+.journey span:nth-of-type(6){color:#0b4658}
+
+/* ---------- personas, three across ---------- */
+/* The sheets carry their own names, so no captions — three across the full
+   measure of the pane, lining up with the text above and below them. */
+.personas{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;
+}
+.personas figure{
+  border-radius:12px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 16px 34px -24px rgba(24,48,54,.7);
+}
+.personas img{width:100%;height:auto;display:block;cursor:zoom-in}
+
+/* ---------- screens carousel ---------- */
+/* Every slide is the same window — --frame tall — so switching screens never
+   resizes the page. Each screenshot sits at its own natural size (scaled down
+   only if it's wider than the frame) and is centred in the window; one that
+   runs longer than the window scrolls inside its slide rather than shrinking. */
+.gal{
+  --frame:min(72vh,700px);      /* the window every screen is shown in */
+  --pad:18px;
+  margin-top:8px;
+}
+.gal .stage{
+  position:relative;overflow:hidden;border-radius:14px;height:var(--frame);
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,236,216,.34));
+  border:1px solid rgba(255,255,255,.55);
+}
+.gal .track{display:flex;align-items:stretch;height:100%;transition:transform .55s var(--ease)}
+.gal .slide{
+  flex:0 0 100%;height:100%;padding:var(--pad);display:flex;
+  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(60,140,150,.45) transparent;
+}
+.gal .slide::-webkit-scrollbar{width:8px}
+.gal .slide::-webkit-scrollbar-thumb{background:rgba(60,140,150,.4);border-radius:100px}
+/* margin:auto rather than justify/align-items:center — auto margins centre a
+   short screen without clipping the top of one that overflows.
+   The width is set per image in case.js, from its own proportions: a screen
+   that can fill the window's height does, so nothing sits in a field of
+   padding, and only the long pages are left over to scroll. */
+.gal .slide img{
+  margin:auto;width:auto;height:auto;display:block;max-width:100%;
+  border-radius:6px;box-shadow:0 12px 30px -18px rgba(30,50,55,.7);
+  cursor:zoom-in;
+}
+/* a screen that runs past the bottom of its window says so */
+.gal .stage::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:64px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(252,246,236,0),rgba(252,246,236,.85));
+  opacity:0;transition:opacity .35s var(--ease);
+}
+.gal .stage.tall::after{opacity:1}
+.gal .stage .scrollhint{
+  position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+  padding:5px 12px;border-radius:100px;background:rgba(255,252,246,.9);
+  border:1px solid rgba(120,95,60,.22);
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease);
+}
+.gal .stage.tall .scrollhint{opacity:1}
+.gal .gnav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(120,95,60,.28);background:rgba(255,252,246,.92);
+  color:var(--ink);cursor:pointer;transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.gal .gnav:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
+.gal .prev{left:10px}
+.gal .next{right:10px}
+.gal .gnav svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.gal .dots{display:flex;justify-content:center;gap:9px;margin-top:14px}
+.gal .dot{
+  width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
+  border:0;background:rgba(60,140,150,.32);transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.gal .dot.on{background:var(--ink);transform:scale(1.25)}
+/* the name of the screen you're looking at and what it's for, swapped by the
+   carousel — this is where each screen's purpose is written up */
+.gal .galcap{
+  margin:14px auto 0;max-width:66ch;text-align:center;
+  font-size:14px;line-height:1.6;color:var(--ink-soft);
+  min-height:2.6em;      /* held steady so a short caption doesn't jump the page */
+}
+.gal .galcap strong{color:var(--sea);font-weight:600}
+
+/* ---------- click any screen to see it full size ---------- */
+/* full size means full size: a tall screen keeps its width and the overlay
+   scrolls, rather than the image being squeezed down to fit the viewport */
+#lightbox{
+  position:fixed;inset:0;z-index:60;overflow:auto;padding:34px;
+  display:grid;place-items:start center;
+  background:rgba(18,38,44,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease);cursor:zoom-out;
+}
+#lightbox.open{opacity:1;pointer-events:auto}
+#lightbox img{
+  width:min(1180px,100%);height:auto;
+  border-radius:10px;box-shadow:0 40px 90px -40px rgba(0,0,0,.9);
+}
+
+/* ---------- back to the top of the write-up ---------- */
+.totop{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:46px auto 0;padding:12px 22px;border-radius:100px;cursor:pointer;
+  font-family:inherit;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--sea);background:rgba(255,252,246,.6);
+  border:1px solid rgba(120,95,60,.24);
+  transition:transform .4s var(--ease),background .4s var(--ease),box-shadow .4s var(--ease);
+}
+.totop svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.totop:hover{transform:translateY(-3px);background:#fff;box-shadow:0 14px 28px -18px rgba(24,48,54,.8)}
+.totop:focus-visible{outline:2px solid var(--sea);outline-offset:4px}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rev.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  /* three persona sheets side by side stop being readable well before this */
+  .personas{grid-template-columns:1fr;gap:14px}
+}
+@media (max-width:820px){
+  header{padding:20px 22px}
+  .topnav{display:none}
+  main{padding:112px 16px 70px}
+  .pane{border-radius:20px;padding:34px 22px 40px}
+  /* one column: each observation is followed by its opportunity, so the
+     column headings go and an arrow carries the pairing instead */
+  .grid2{grid-template-columns:1fr;gap:0}
+  .grid2 .head{display:none}
+  .grid2 .cell{padding:12px 0 0;border-bottom:0}
+  .grid2 .cell.b{padding:6px 0 14px;border-bottom:1px solid rgba(120,95,60,.13)}
+  .grid2 .cell.b::before{content:"→ ";color:var(--ink-faint)}
+  #lightbox{padding:16px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rev{opacity:1;transform:none;transition:none}
+  .gal .track{transition:none}
+}

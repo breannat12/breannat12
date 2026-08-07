@@ -38,6 +38,9 @@
   --shore: 52%;               /* horizontal position of the tide line */
   --trail: 170px;             /* footprint / shell gutter */
   --dry: 74vw;                /* rightmost x still on dry sand — JS measures it */
+  /* ---- COLUMN WIDTH — every block of text on the page runs to exactly this,
+     the same measure as the rule under the Work tabs. One number, one edge. */
+  --col: min(620px, var(--dry) - var(--trail));
 
   --ink:        #2c3a40;
   --ink-soft:   #5f6f74;
@@ -134,7 +137,7 @@ section{
   padding:120px 0;
 }
 /* nothing reaches past the dry sand */
-.body{max-width:min(540px, var(--dry) - var(--trail));padding-right:48px}
+.body{max-width:var(--col)}
 
 .eyebrow{
   font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);
@@ -154,6 +157,21 @@ h1{font-family:var(--script);font-weight:500;font-size:clamp(34px,4.4vw,54px);li
 }
 .hero-name{margin-top:22px;font-size:clamp(32px,3.9vw,48px)}
 
+/* ---- CRABS — one above the intro, one below ----
+   Each sits in a strip the width of the text column and walks it left to right
+   as you scroll past; the transform itself is written by walkCrabs(). */
+.crabline{position:relative;height:44px;margin:16px 0;pointer-events:none;overflow:hidden}
+.crab{position:absolute;left:0;top:0;width:38px;height:38px;display:block;z-index:1;
+  opacity:.92}
+.crab svg{width:100%;height:100%;display:block}
+/* the scuffs it leaves in the sand behind it */
+.crabtrack{
+  position:absolute;width:6px;height:4px;border-radius:50%;
+  background:rgba(150,112,66,.5);
+  animation:crabfade 2.5s linear forwards;
+}
+@keyframes crabfade{from{opacity:.55;transform:scale(1)} to{opacity:0;transform:scale(.7)}}
+
 /* ---- SOCIAL ICONS — size, spacing and drop live here ---- */
 .social{display:flex;align-items:center;gap:16px;padding-bottom:12px}
 .social a{
@@ -165,15 +183,9 @@ h1{font-family:var(--script);font-weight:500;font-size:clamp(34px,4.4vw,54px);li
 /* the envelope is drawn with lines, not a solid shape */
 .social svg.stroke{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---- HERO TEXT WIDTH — edit this to widen/narrow the intro ----
-   The text starts at var(--trail) (170px) and this makes it run out to
-   --hero-edge, measured from the left of the screen. Bump 50vw up or down
-   to taste; the min() keeps it from ever crossing onto wet sand. */
-#home{--hero-edge:50vw}
-#home .body{max-width:min(calc(var(--hero-edge) - var(--trail) + 48px), var(--dry) - var(--trail))}
-#home .lede{max-width:none}   /* other sections stay capped at 40ch for readability */
 h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);line-height:1.15;letter-spacing:-.015em}
-.lede{margin-top:20px;font-size:15.5px;line-height:1.75;color:var(--ink-soft);max-width:40ch}
+/* no cap of its own — every lede runs the full --col measure */
+.lede{margin-top:20px;font-size:15.5px;line-height:1.75;color:var(--ink-soft)}
 
 .cta{
   display:inline-flex;align-items:center;gap:12px;margin-top:30px;
@@ -197,14 +209,13 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
    line by JS, so the marker column is a zero-width anchor. */
 #work{display:block;padding:150px 0 160px var(--trail)}
 
-.work-head{width:min(620px, var(--dry) - var(--trail));margin:0 0 34px}
-.work-head .lede{max-width:44ch}
-.beachcomb{position:relative;width:min(620px, var(--dry) - var(--trail))}
+.work-head{width:var(--col);margin:0 0 34px}
+.beachcomb{position:relative;width:var(--col)}
 
 /* ---- CATEGORY TABS — one row, the active one underlined ---- */
 .tabs{
   display:flex;gap:38px;margin:0 0 40px;
-  width:min(620px, var(--dry) - var(--trail));
+  width:var(--col);
   border-bottom:1px solid rgba(120,95,60,.22);
 }
 .tab{
@@ -270,6 +281,8 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
   display:flex;flex-direction:row;width:100%;
   height:var(--rest);
   border-radius:14px;overflow:hidden;cursor:pointer;
+  /* the card is an <a> when the project has a page of its own */
+  color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent;
   background:linear-gradient(180deg, rgba(255,253,248,.9), rgba(255,247,236,.78));
   border:1px solid rgba(255,255,255,.7);
   box-shadow:0 10px 26px -18px rgba(40,60,65,.55);
@@ -305,6 +318,13 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;
 }
 
+/* the hackathon a project was built for, if it was — sat in the bottom right
+   corner of the card, out of the way of the blurb above it */
+.cbody .award{
+  margin-top:auto;padding-top:12px;text-align:right;
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8a4a20;
+}
+
 /* the detail drawer inside each card — 0fr → 1fr animates height with no magic numbers */
 .more{display:grid;grid-template-rows:0fr;opacity:0;
   transition:grid-template-rows .55s var(--ease),opacity .4s var(--ease),margin-top .55s var(--ease)}
@@ -315,6 +335,8 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
 .more .open{margin-top:10px;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px}
 .more .open span{width:22px;height:1px;background:currentColor;position:relative}
 .more .open span::after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
+/* a project that opens in the drawer says so with a chevron, not a drawn arrow */
+.more .open i{font-style:normal;font-size:13px;line-height:1;letter-spacing:0}
 
 /* ---------- shell and card, hovered as one ---------- */
 /* Either half of a find wakes the other: the shell is inside .find, so one
@@ -351,7 +373,7 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
 .find:has(.shellbtn:hover) .badge{transform:rotate(-12deg) scale(1.12)}
 
 /* ---------- toolkit ---------- */
-.tide{grid-column:2;display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;max-width:460px}
+.tide{grid-column:2;display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;max-width:var(--col)}
 .tide span{
   font-size:11px;letter-spacing:.1em;padding:7px 14px;border-radius:100px;
   background:rgba(255,250,240,.55);border:1px solid rgba(120,95,60,.2);color:var(--ink-soft);
@@ -398,7 +420,13 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
 }
 #drawer.open{transform:none}
 #drawer .eyebrow{margin-bottom:14px}
+#drawer .eyebrow::before{display:none}   /* no leading dash in front of the tags */
 #drawer h2{margin-bottom:18px}
+/* the hackathon it was built for, directly under the title */
+#drawer .award{
+  margin:-10px 0 18px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:#8a4a20;line-height:1.5;
+}
 #drawer p{font-size:15px;line-height:1.8;color:var(--ink-soft);margin-bottom:18px}
 #drawer ul{list-style:none;margin:22px 0}
 #drawer li{font-size:14px;line-height:1.7;color:var(--ink-soft);padding-left:20px;position:relative;margin-bottom:9px}
@@ -462,7 +490,7 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
   .hint{left:20px}
   section{grid-template-columns:1fr;padding:110px 22px 90px;align-content:center}
   .work-head,.tide{grid-column:1}
-  .work-head,.beachcomb,.tabs{width:auto}
+  .work-head,.beachcomb,.tabs,.body,.tide{width:auto;max-width:none}
   .tabs{gap:26px;font-size:11.5px}
   #work{padding:110px 16px 90px}
   /* no room for a gutter: the shell survives as the badge on the card */
@@ -476,8 +504,6 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
   .find:has(:focus-visible) .pcard{flex-direction:column;height:auto}
   .cbody .short{display:block;-webkit-line-clamp:none;line-clamp:none}
   .thumb{height:170px;flex:0 0 170px;min-height:0}
-  .body{padding-right:0}
-  .lede{max-width:none}
   .hero-top{gap:16px}
   .pfp{width:84px;height:84px}
   #trail{display:none}
@@ -531,6 +557,37 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
 <ellipse cx="234.656" cy="361.688" rx="26.1209" ry="22.1023" transform="rotate(-74.1114 234.656 361.688)" fill="#F28B8C"/>
 <ellipse cx="305.045" cy="371.281" rx="32.1488" ry="28.1302" transform="rotate(-74.1114 305.045 371.281)" fill="#F28B8C"/>
   </symbol>
+  <!-- the crab, from crab.svg — the white backing rect and its clip path are
+       left out so it sits on the sand rather than on a card of its own -->
+  <symbol id="crab" viewBox="0 0 848 858" fill="none">
+<path d="M660.589 689.222C633.922 674.178 582.866 644.092 552.551 623.579C562.352 611.498 580.313 590.347 595.63 588.705C614.776 586.654 666.743 627.681 688.624 642.725C710.505 657.768 715.292 702.897 711.873 724.095C708.382 745.739 683.838 784.952 672.213 775.379C660.589 765.806 683.838 702.337 660.589 689.222Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M664.008 692.641C671.074 692.868 686.983 692.367 694.095 688.538" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M191.829 688.612C218.497 673.569 269.553 643.482 299.867 622.969C290.066 610.889 272.105 589.737 256.789 588.096C237.643 586.044 185.675 627.071 163.794 642.115C141.913 657.158 137.126 702.288 140.545 723.485C144.036 745.129 168.58 784.342 180.205 774.769C191.829 765.196 168.58 701.727 191.829 688.612Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M668.289 549.11C637.852 552.438 561.109 554.132 524.52 555.143C525.439 539.614 522.739 536.854 534.225 526.59C548.583 513.759 648.421 506.342 674.968 505.804C701.516 505.267 742.645 538.286 752.227 557.501C762.011 577.12 773.39 619.018 758.365 618.019C743.339 617.02 712.9 544.232 668.289 549.11Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M187.11 542.272C217.547 545.6 294.29 547.295 330.879 548.305C329.96 532.776 332.66 530.016 321.174 519.752C306.815 506.922 206.978 499.504 180.43 498.966C153.882 498.429 112.754 531.449 103.172 550.663C93.3872 570.282 82.0083 612.18 97.0339 611.181C112.06 610.182 142.499 537.394 187.11 542.272Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M116.981 620.162C147.304 615.925 222.12 598.75 257.84 590.759C253.142 575.929 255.082 572.591 241.43 565.457C224.364 556.539 125.756 573.827 99.8863 579.816C74.0171 585.805 42.2406 627.901 37.6622 648.878C32.9872 670.298 32.229 713.707 46.5509 709.054C60.8728 704.401 72.5351 626.371 116.981 620.162Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M732.674 620.519C702.35 616.283 627.534 599.108 591.815 591.116C596.513 576.286 594.572 572.948 608.225 565.814C625.291 556.896 723.899 574.185 749.768 580.173C775.637 586.162 807.414 628.258 811.992 649.236C816.667 670.655 817.426 714.064 803.104 709.411C788.782 704.758 777.119 626.728 732.674 620.519Z" fill="#FE9158" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M746.062 624.946C754.724 622.894 772.73 617.561 775.465 612.638" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M185.36 475.881C150.487 463.573 84.4331 415.435 99.2028 321.346C84.3875 297.413 67.0651 235.052 116.297 177.068C177.838 104.586 266.046 118.946 274.251 124.416C280.816 128.792 271.516 137.18 266.046 140.827C244.393 157.01 201.77 197.171 204.505 228.351C217.953 218.55 249.498 194.709 268.097 177.751C277.67 168.862 285.192 184.589 284.508 191.427C283.824 198.265 298.184 291.943 173.735 337.757C171.228 361.233 171.957 411.605 194.933 425.281C220.46 409.554 298.731 377.826 407.589 376.732C543.662 375.365 633.922 406.135 647.597 415.708C661.273 400.665 686.163 359.638 676.316 315.875C625.944 302.2 531.081 251.19 554.603 156.554C560.757 142.194 615.459 201 640.759 201.684C637.113 184.133 622.297 145.477 592.211 131.254C565.954 113.749 569.874 97.5205 575.116 91.5944C579.447 86.8079 595.219 79.2863 623.665 87.4917C659.222 97.7485 785.722 151.084 746.062 300.832C754.723 343.683 750.849 437.316 666.06 469.043C664.692 529.672 621.203 653.938 458.189 665.973C254.422 681.016 193.012 553.149 185.36 475.881Z" fill="#FE9158"/>
+<path d="M185.36 475.881C150.487 463.573 84.4331 415.435 99.2028 321.346M194.933 425.281C179.616 438.409 182.169 464.485 185.36 475.881C193.012 553.149 254.422 681.016 458.189 665.973C621.203 653.938 664.692 529.672 666.059 469.043C668.888 444.974 654.93 423.457 647.597 415.708M99.2028 321.346C84.3875 297.413 67.0651 235.052 116.297 177.068C177.838 104.586 266.046 118.946 274.251 124.416C280.816 128.792 271.516 137.18 266.046 140.827C244.393 157.01 201.77 197.171 204.505 228.351C217.953 218.55 249.498 194.709 268.097 177.751C277.67 168.862 285.192 184.589 284.508 191.427C283.824 198.265 298.184 291.943 173.735 337.757M99.2028 321.346C109.004 330.691 137.631 347.056 173.735 337.757M173.735 337.757C171.228 361.233 171.957 411.605 194.933 425.281M194.933 425.281C220.46 409.554 298.731 377.826 407.589 376.732C543.662 375.365 633.922 406.135 647.597 415.708M647.597 415.708C661.273 400.665 686.163 359.638 676.316 315.875M746.062 300.832C719.805 322.166 688.624 319.75 676.316 315.875C625.944 302.2 531.081 251.19 554.603 156.554C560.757 142.194 615.459 201 640.759 201.684C637.113 184.133 622.297 145.477 592.211 131.254C565.954 113.749 569.874 97.5205 575.116 91.5944C579.447 86.8079 595.219 79.2863 623.665 87.4917C659.222 97.7485 785.722 151.084 746.062 300.832ZM746.062 300.832C754.723 343.683 750.849 437.316 666.059 469.043" stroke="#F07F44" stroke-width="10.9405"/>
+<ellipse cx="299.402" cy="458.941" rx="34.1892" ry="39.6595" transform="rotate(-3.84969 299.402 458.941)" fill="#272727"/>
+<ellipse cx="549.667" cy="458.941" rx="34.1892" ry="39.6595" transform="rotate(2.17976 549.667 458.941)" fill="#272727"/>
+<ellipse cx="310.319" cy="443.214" rx="11.7432" ry="14.1324" transform="rotate(-3.84969 310.319 443.214)" fill="#EFEFEF"/>
+<ellipse cx="563.493" cy="444.565" rx="11.8087" ry="13.3742" transform="rotate(2.17976 563.493 444.565)" fill="#EFEFEF"/>
+<path d="M98.5192 626.997C95.1003 623.806 88.9462 614.689 91.6814 603.749" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M384.34 494.343C388.899 503.233 398.662 521.011 426.051 521.011C449.984 521.011 461.608 502.549 465.027 492.292" stroke="#272727" stroke-width="13.6757" stroke-linecap="round"/>
+<path d="M190.83 688.538C186.271 691.045 174.145 695.649 162.111 694.008" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M157.324 546.994C153.222 542.664 146.247 530.584 151.17 516.908" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<path d="M681.103 549.046C686.345 543.804 696.556 530.721 695.462 520.327" stroke="#F07F44" stroke-width="8.20541" stroke-linecap="round"/>
+<ellipse cx="290.662" cy="526.481" rx="41.7108" ry="21.8811" fill="white" fill-opacity="0.2"/>
+<ellipse cx="274.935" cy="584.603" rx="10.9405" ry="7.52162" fill="#F07F44" fill-opacity="0.5"/>
+<ellipse cx="303.654" cy="607.168" rx="28.7189" ry="15.0432" fill="#F07F44" fill-opacity="0.5"/>
+<ellipse cx="569.646" cy="527.849" rx="41.7108" ry="21.8811" fill="white" fill-opacity="0.2"/>
+<path d="M204.506 222.881C207.241 245.674 207.378 294.131 186.043 305.619" stroke="#F07F44" stroke-width="10.9405" stroke-linecap="round"/>
+<path d="M640.076 198.027C643.111 216.24 652.852 255.835 667.535 268.518" stroke="#F07F44" stroke-width="10.9405" stroke-linecap="round"/>
+<path d="M624.349 101.851C658.538 113.02 728.831 152.862 736.489 222.881C734.21 202.595 708.591 149.99 624.349 101.851Z" fill="white" fill-opacity="0.2"/>
+<path d="M97.4006 256.303C105.357 206.47 140.388 148.272 209.631 135.357C189.575 139.159 137.494 168.862 97.4006 256.303Z" fill="white" fill-opacity="0.2"/>
+  </symbol>
   <symbol id="sh-spiral" viewBox="0 0 848 813" fill="none">
 <path d="M816.161 691.228C663.125 758.471 469.426 651.594 391.706 589.75C-75.3188 760.101 -118.625 47.2601 396.842 62.8651C809.216 75.3491 848.211 486.975 816.161 691.228Z" fill="#FAB1B1" stroke="#F28B8C" stroke-width="12.889"/>
 <path d="M392.366 593.996C428.276 540.594 483.82 404.577 418.718 287.73C353.617 170.883 234.397 178.709 171.374 234.836C106.131 292.938 82.7482 392.076 160.42 458.276C243.141 514.996 298.871 425.906 292.279 383.451C288.653 360.101 263.759 311.793 208.569 320.364C153.378 328.935 166.507 383.742 178.785 394.554C191.377 405.642 221.095 401.028 217.798 379.801C215.161 362.819 203.181 360.332 197.52 361.211" stroke="#F28B8C" stroke-width="12.889"/>
@@ -545,10 +602,9 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
 <header>
   <a class="logo" href="#home">breanna thayillam.</a>
   <nav class="topnav">
+    <a href="#home">About</a>
     <a href="#work">Work</a>
-    <a href="#about">About</a>
     <a href="#toolkit">Toolkit</a>
-    <a href="#contact">Contact</a>
   </nav>
 </header>
 
@@ -563,6 +619,7 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
   <section id="home">
     <div></div>
     <div class="body">
+      <div class="crabline"><span class="crab"><svg viewBox="0 0 848 858" aria-hidden="true"><use href="#crab"/></svg></span></div>
       <div class="hero-top rev">
         <img class="pfp" src="portfolio pfp.png" alt="Breanna Thayillam" width="150" height="150">
         <div class="social">
@@ -581,30 +638,19 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
       </div>
       <h1 class="hero-name rev">hello! i'm breanna</h1>
       <p class="lede rev">I'm an Electrical Engineering & Computer Science major at UC Berkeley with a strong interest in front-end development, UI/UX design, and human-computer interaction. I aspire to combine my passion for computer science and art to create user-centered technology that makes a positive impact in my community and around the world.</p>
-      <a class="cta rev" href="#about">Start your walk <span class="arrow"></span></a>
-    </div>
-  </section>
-
-  <section id="about">
-    <div></div>
-    <div class="body">
-      <p class="eyebrow rev">About</p>
-      <h2 class="rev">Somewhere between<br>logic and low tide</h2>
-      <p class="lede rev">A computer science student and engineer who cares about the seams — the places where a system meets a person. I like problems that need both a whiteboard and a conversation.</p>
-      <p class="lede rev">Currently building at Cerenity Innovation, and always collecting things that wash up: half-finished side projects, good documentation, better questions.</p>
-      <a class="cta rev" href="#work">See what I've found <span class="arrow"></span></a>
+      <div class="crabline"><span class="crab"><svg viewBox="0 0 848 858" aria-hidden="true"><use href="#crab"/></svg></span></div>
     </div>
   </section>
 
   <section id="work">
     <div class="work-head rev">
       <p class="eyebrow">Selected Work</p>
-      <h2>Things the tide<br>brought in</h2>
-      <p class="lede">Follow the shells. Hover either the shell or its card to turn it over, click to read the whole story.</p>
+      <h2>Project Highlights</h2>
+      <p class="lede">Explore some of my past creations and case studies in UX, design, and development.</p>
     </div>
     <div class="tabs rev" id="worktabs" role="tablist" aria-label="Project categories">
-      <button class="tab on" role="tab" aria-selected="true"  data-cat="web">Web/App</button>
-      <button class="tab"    role="tab" aria-selected="false" data-cat="design">UI/UX Design</button>
+      <button class="tab on" role="tab" aria-selected="true"  data-cat="design">UI/UX Design</button>
+      <button class="tab"    role="tab" aria-selected="false" data-cat="web">Web/App</button>
     </div>
     <div class="beachcomb" id="beachcomb">
       <svg id="combtrail" aria-hidden="true"></svg>
@@ -619,21 +665,6 @@ h2{font-family:var(--script);font-weight:500;font-size:clamp(28px,3.2vw,40px);li
       <p class="lede rev">The tools I reach for most, and the ones I'm still learning to use well.</p>
     </div>
     <div class="tide rev" id="tide"></div>
-  </section>
-
-  <section id="contact">
-    <div></div>
-    <div class="body">
-      <p class="eyebrow rev">Contact</p>
-      <h2 class="rev">Send a message<br>in a bottle</h2>
-      <p class="lede rev">Working on something interesting, or just want to compare notes? I read everything that washes up.</p>
-      <a class="bottle rev" href="mailto:info@cerenityinnovation.com">Get in touch <span>→</span></a>
-      <div class="links rev">
-        <a href="#" target="_blank" rel="noopener">GitHub</a>
-        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="#" target="_blank" rel="noopener">Résumé</a>
-      </div>
-    </div>
   </section>
 </main>
 
@@ -759,6 +790,7 @@ function draw(){
   ctx.globalAlpha = .55;
   fillBand(lead, -(88 + surge * 1.5), '#cba473');
   ctx.globalAlpha = .4;
+  
   fillBand(lead, -(42 + surge * 1.1), '#bf9564');
   ctx.restore();
 
@@ -846,7 +878,54 @@ function tick(t){
 
   draw();
   if (++frame % 4 === 0) washPrints();
+  walkCrabs();
   requestAnimationFrame(tick);
+}
+
+/* =========================================================
+   2b. CRABS — each paces its own strip on a clock of its own,
+       nothing to do with the scroll. The top one sets off from
+       the right, the bottom one from the left, so they cross.
+   ========================================================= */
+const crabs = [...document.querySelectorAll('.crab')];
+/* seconds for one there-and-back, per crab. Deliberately unequal and not
+   multiples of each other, so the two never fall into step. */
+const CRAB_TRIP = [34, 25];
+const TRACK_GAP = 24;      /* how far a crab walks between marks in the sand */
+let crabSpan = [];         /* how far each has to walk — measured, not per frame */
+let lastDrop = [];         /* where each last left a mark */
+let dropSide = [];         /* marks alternate side, like a set of legs */
+
+function measureCrabs(){
+  crabSpan = crabs.map(c => Math.max(c.parentElement.clientWidth - c.offsetWidth, 0));
+}
+
+/* a faint scuff at x, which fades on its own and takes itself out */
+function dropTrack(i, x){
+  const mark = document.createElement('span');
+  mark.className = 'crabtrack';
+  mark.style.left = (x + crabs[i].offsetWidth / 2 - 3) + 'px';
+  mark.style.top  = (26 + (dropSide[i] ? 7 : 0)) + 'px';
+  crabs[i].parentElement.appendChild(mark);
+  dropSide[i] = !dropSide[i];
+  setTimeout(() => mark.remove(), 2600);
+}
+
+function walkCrabs(){
+  for (let i = 0; i < crabs.length; i++){
+    const phase = clock / CRAB_TRIP[i % CRAB_TRIP.length] * Math.PI * 2;
+    /* 0 → 1 → 0, easing into each turn rather than snapping round */
+    const osc = (1 - Math.cos(phase)) / 2;
+    const p = i % 2 === 0 ? 1 - osc : osc;      /* even crabs start at the right */
+    const x = p * crabSpan[i];
+    crabs[i].style.transform = `translateX(${x.toFixed(1)}px)`;
+
+    if (reduce) continue;
+    if (lastDrop[i] === undefined || Math.abs(x - lastDrop[i]) > TRACK_GAP){
+      lastDrop[i] = x;
+      dropTrack(i, x);
+    }
+  }
 }
 
 /* =========================================================
@@ -939,7 +1018,9 @@ function layTrail(){
     step.appendChild(footTpl.content.cloneNode(true));
     step.style.left = (GUTTER + wander + s * 13) + 'px';
     step.style.top  = y + 'px';
-    step.style.transform = `rotate(${8 + s * 6 + Math.sin(y * .004) * 10}deg)`;
+    /* +180 turns the print to face down the page — the walk heads the way you
+       scroll, rather than back up the beach at you */
+    step.style.transform = `rotate(${188 + s * 6 + Math.sin(y * .004) * 10}deg)`;
     step.style.opacity = .18 + .16 * ((Math.sin(y * .013) + 1) / 2);
     trail.appendChild(step);
     s *= -1;
@@ -986,9 +1067,12 @@ function thumb(i, from, to){
 /* cat:'web' puts a project under the Web/App tab, cat:'design' under UI/UX Design.
    img  — the card's title image; without it the generated wave artwork is used
    fit  — 'contain' mats a logo on a coloured plate instead of cropping it
-   gallery — extra screens, shown as a carousel in the drawer under the bullets */
+   gallery — extra screens, shown as a carousel in the drawer under the bullets
+   page — a case study of its own; with one set, the card navigates there
+          instead of sliding the drawer out (the UI/UX work all does this) */
 const PROJECTS = [
   { cat:'web', shell:'scallop', title:'SuperSupport', meta:'UX Research · Mobile App Dev', from:'#c47a4a', to:'#f5cf9c',
+    award:'Technovation 2023 Global Quarterfinalist',
     img:'pictures/superSupport/superTitle.png', fit:'contain', plate:'#eaf0fb',
     gallery:[
       'pictures/superSupport/Screenshot_20230319-152200.png',
@@ -998,9 +1082,9 @@ const PROJECTS = [
       'pictures/superSupport/Screenshot_20230408-222952.png'
     ],
     blurb:'App disguised as educational platform but secretly helps children identify, report, and escape domestic abuse.',
-    body:'Every messaging product optimises for instant. I wanted to see what changes when it can\'t be. People wrote longer. They asked better questions. They came back.',
     points:['Monthly form with responses sent to a trusted adult or organization','Interactive games to help recognize abuse','Map of nearby safe spots (hospitals, police stations, etc)','Fake learning dashboard when parents sign in'] },
   { cat:'web', shell:'star', title:'EcoThreads', meta:'Full-Stack · Web Dev', from:'#2b7f96', to:'#8fd3c8',
+    award:'HackBytes II 2023',
     img:'pictures/ecoThreads/ecoThreadsThumbnail.png', fit:'cover', plate:'#eaf0fb',
     gallery:[
       'pictures/EcoThreads/ecoThreads1.jpg',
@@ -1010,9 +1094,9 @@ const PROJECTS = [
       'pictures/EcoThreads/ecoThreads5.jpg'
     ],
     blurb:'Website designed to allow users to list clothes for donation and exchange with other users, encouraging sustainable fashion.',
-    body:'Tidewater started as a favour and turned into the thing I learned the most from. The hard part was never the calendar — it was modelling the messy human rules people had been holding in their heads.',
     points:['Gamified by displaying leaderboard of how much water and cotton users have saved based on the number of clothes they exchanged','Account creation and saving user data','Tips to shop sustainably'] },
   { cat:'web', shell:'scallop', title:"Earth's Final Hour", meta:'Java · Game Dev', from:'#1f5f7a', to:'#63b0c4',
+    award:'WaffleHacks 2023',
     img:'pictures/EarthsFinalHour/EFHThumbnail.png', fit:'fill', plate:'#eaf0fb',
     gallery:[
       'pictures/EarthsFinalHour/EFH1.png',
@@ -1022,27 +1106,33 @@ const PROJECTS = [
       'pictures/EarthsFinalHour/EFH5.png'
     ],
     blurb:'Simulation game to educate children about how their daily actions impact the environment around them.',
-    body:'Part coursework, part obsession. I wanted to know whether a small model on open data could beat a naive drift baseline — it could, but only once I stopped treating wind and current as independent.',
     points:['Users can move character and have them complete everyday actions (eat food, drive to grocery store, turn on/off lights, watch TV, change clothes, take a shower/bath, etc)','As the game progresses, the environment seen through the window degrades from a thriving grassland to a smoke-filled land with damaging factories','Once the player depletes a certain amount of CO2 or water, the game is over and they are encouraged to play again with more sustainable decisions'] },
-  { cat:'web', shell:'scallop', title:'EcoPals', meta:'Java · Front-End', from:'#3d6b7d', to:'#e0b077',
+  { cat:'web', shell:'star', title:'EcoPals', meta:'Java · Front-End', from:'#3d6b7d', to:'#e0b077',
+    award:'TritonHacks 2024',
+    img:'pictures/EcoPals/ecoPalsThumbnail.png', fit:'cover', plate:'#eaf0fb',
+    gallery:[
+      'pictures/EcoPals/ecoPals1.jpg',
+      'pictures/EcoPals/ecoPals2.jpg',
+      'pictures/EcoPals/ecoPals3.jpg',
+      'pictures/EcoPals/ecoPals4.jpg',
+      'pictures/EcoPals/ecoPals5.jpg'
+    ],
     blurb:'App designed for kids to virtually "adopt" an endangered animal and earn points by caring for it and learning about the dangers they face',
-    body:'Built for myself after one too many "this file has no coverage and nobody noticed" moments. It maps source files to test files, watches change frequency, and quietly flags the ones going dark.',
     points:["Mini game in which user's animal faces threats in their habitat (trash, fishing nets, poachers), and the player can save the animal by answering trivia questions about the species",'Daily challenges to earn points, which promote protecting the environment and animals by planting trees, picking up trash, etc.'] },
   { cat:'design', shell:'scallop', title:'Voltify', meta:'UI/UX · Figma  · Claude Design', from:'#4a7a5e', to:'#b8d492',
     img:'pictures/voltify/voltifyThumbnail.png', fit:'cover', plate:'#eaf0fb',
-    gallery:[
-      
-    ],
-    blurb:'An interactive map of sixty years of coastal wetland loss, built from public survey data.',
-    body:'The data existed; nobody could see it. I spent longer on the legend than the map — getting people to read a rate of change rather than a snapshot turned out to be the whole design problem.',
-    points:['Six decades of survey data, normalised into one timeline','Scrubbing timeline with per-parish breakdown','Picked up by two local conservation groups'] },
+    page:'voltify.html',
+    blurb:'A platform that recommends the right residential electricity plan from your own usage, then keeps watching the market for a cheaper one.',
+    body:'Choosing an energy plan means comparing pricing structures, contract lengths and cancellation policies at once — so most people stay on an expensive plan. Voltify turns that into a few minutes of reading, and then does the monitoring itself.',
+    points:['Upload a bill or enter usage by hand for personalized recommendations','Side-by-side plan comparison with estimated monthly savings','Dashboard and analytics that keep working after the switch','Seven screens designed from research through high-fidelity UI'] },
   { cat:'design', shell:'star', title:'Beachcomber', meta:'Mobile · Swift, SwiftUI', from:'#a05f6b', to:'#f0b3a4',
+    page:'beachcomber.html',
     blurb:'A field notebook for logging what you find on a walk — photo, tide, place, and a guess at the species.',
     body:'An excuse to learn SwiftUI properly, and to stop losing the notes I was keeping in my camera roll. Offline-first, because the beaches worth walking rarely have signal.',
     points:['Offline-first with conflict-free sync on reconnect','Auto-tags each find with tide state and location','On-device species suggestions from a small Core ML model'] }
 ];
 
-const TOOLS = ['Python','TypeScript','React','Node.js','Go','Swift','PostgreSQL','PyTorch','D3','Figma','Docker','Git','AWS','Accessibility'];
+const TOOLS = ['Python','Java','HTML', 'CSS', 'JS','React','Figma','Git','Claude Design', 'Kotlin', 'XML'];
 
 document.getElementById('tide').innerHTML = TOOLS.map(t => `<span>${t}</span>`).join('');
 
@@ -1057,11 +1147,19 @@ let uid = 0;   /* gradient ids must stay unique across re-renders */
 function buildFind(p, i){
   const find = document.createElement('div');
   find.className = 'find rev';
+  /* a project with a page of its own is a link, not a button: cmd-click, middle
+     click and "open in new tab" all have to keep working */
+  const cardOpen = p.page
+    ? `<a class="pcard" href="${p.page}" aria-label="${p.title} — open case study">`
+    : `<article class="pcard" tabindex="0" role="button" aria-label="${p.title} — open case study">`;
+  const cardClose = p.page ? '</a>' : '</article>';
   find.innerHTML = `
     <div class="marker">
-      <button class="shellbtn" aria-label="${p.title} — open case study">${shell(p.shell)}</button>
+      ${p.page
+        ? `<a class="shellbtn" href="${p.page}" aria-label="${p.title} — open case study">${shell(p.shell)}</a>`
+        : `<button class="shellbtn" aria-label="${p.title} — open case study">${shell(p.shell)}</button>`}
     </div>
-    <article class="pcard" tabindex="0" role="button" aria-label="${p.title} — open case study">
+    ${cardOpen}
       <div class="thumb${p.fit === 'contain' ? ' plate' : ''}"${p.plate ? ` style="--plate:${p.plate}"` : ''}>
         ${p.img
           ? `<img class="thumbimg${p.fit === 'contain' ? ' fit' : ''}" src="${p.img}" alt="">`
@@ -1071,24 +1169,31 @@ function buildFind(p, i){
       <div class="cbody">
         <span class="meta">${p.meta}</span>
         <h3>${p.title}</h3>
-        <p class="short">${p.blurb}</p>
+        ${p.blurb ? `<p class="short">${p.blurb}</p>` : ''}
         <div class="more"><div>
-          <ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>
-          <span class="open">Open case study <span></span></span>
+          ${p.points && p.points.length ? `<ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
+          ${p.page
+            ? `<span class="open">Open case study <span></span></span>`
+            : `<span class="open">View project <i>›</i></span>`}
         </div></div>
+        ${p.award ? `<span class="award">${p.award}</span>` : ''}
       </div>
-    </article>`;
+    ${cardClose}`;
 
   /* left is set in drawTrail — each shell is placed on the wave at its own
      height, so the string always runs through the middle of them */
   const btn = find.querySelector('.shellbtn');
   btn.querySelector('svg').style.transform = `rotate(${Math.sin(i * 2.4) * 14}deg)`;
 
-  const card = find.querySelector('.pcard');
-  [btn, card].forEach(el => el.addEventListener('click', () => open(p)));
-  card.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(p); }
-  });
+  /* a project with its own page is already a link — the browser handles the
+     click. Everything else still opens the drawer. */
+  if (!p.page){
+    const card = find.querySelector('.pcard');
+    [btn, card].forEach(el => el.addEventListener('click', () => open(p)));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(p); }
+    });
+  }
 
   /* :has() handles the card/shell pairing; only the trail needs JS, since the
      path lives in a sibling SVG no selector can reach from here */
@@ -1287,13 +1392,15 @@ function mountGallery(){
 
 function open(p){
   lastFocus = document.activeElement;
+  /* every field but the title is optional — a project that doesn't carry one
+     simply has that part of the drawer left out */
   dbody.innerHTML = `<p class="eyebrow">${p.meta}</p>
     <h2 id="dtitle">${p.title}</h2>
-    <p>${p.blurb}</p>
-    <p>${p.body}</p>
-    <ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>
-    ${galleryHTML(p)}
-    <a class="cta" href="#" onclick="return false">View case study <span class="arrow"></span></a>`;
+    ${p.award ? `<p class="award">${p.award}</p>` : ''}
+    ${p.blurb ? `<p>${p.blurb}</p>` : ''}
+    ${p.body  ? `<p>${p.body}</p>`  : ''}
+    ${p.points && p.points.length ? `<ul>${p.points.map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
+    ${galleryHTML(p)}`;
   mountGallery();
   scrim.classList.add('open');
   drawer.classList.add('open');
@@ -1327,10 +1434,13 @@ document.querySelectorAll('.rev').forEach(el => io.observe(el));
 /* =========================================================
    go
    ========================================================= */
-addEventListener('resize', resize);
+addEventListener('resize', () => { resize(); measureCrabs(); });
 resize();
-if (reduce){ draw(); } else { requestAnimationFrame(tick); }
-addEventListener('load', layTrail);
+measureCrabs();
+/* under reduced motion the clock never advances, so each crab simply stays
+   at the end of the strip it would have set off from */
+if (reduce){ draw(); walkCrabs(); } else { requestAnimationFrame(tick); }
+addEventListener('load', () => { layTrail(); measureCrabs(); walkCrabs(); });
 })();
 </script>
 </body>

@@ -1,0 +1,280 @@
+<!doctype html>
+<!-- ============================================================
+     CASE STUDY TEMPLATE
+
+     To start a new project page:
+       1. Copy this file to <project>.html  (e.g. lumen.html)
+       2. Find every PROJECT NAME and replace it
+       3. Put the images in pictures/<project>/ — spaces in a
+          filename are written %20 in the src
+       4. In index.html, add  page:'<project>.html'  to that
+          project's entry in the PROJECTS array (~line 1005).
+          A project with a page becomes a link to it; a project
+          without one opens the side drawer instead.
+
+     Delete any section below you don't need — nothing depends
+     on another being present. All styling is in assets/case.css
+     and all behaviour in assets/case.js, so this file is only
+     ever markup.
+
+     This file starts with an underscore, so GitHub Pages leaves
+     it out of the published site. Don't rename real pages that
+     way or they won't publish.
+     ============================================================ -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROJECT NAME — Breanna Thayillam</title>
+<meta name="description" content="PROJECT NAME — a case study by Breanna Thayillam.">
+
+<!-- link preview: og:image must be an ABSOLUTE url — scrapers don't resolve relative paths -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Breanna Thayillam">
+<meta property="og:url" content="https://breannat12.github.io/github.io/PROJECT.html">
+<meta property="og:title" content="PROJECT NAME — Case Study">
+<meta property="og:description" content="One line on what the project is.">
+<meta property="og:image" content="https://breannat12.github.io/github.io/pictures/PROJECT/thumbnail.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/case.css">
+</head>
+<body>
+
+<!-- the beach: same canvas as the home page, painted by case.js -->
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="vign" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="index.html#home">breanna thayillam.</a>
+  <nav class="topnav">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#home">About</a>
+    <a href="index.html#toolkit">Toolkit</a>
+  </nav>
+</header>
+
+<main>
+  <article class="pane">
+    <!-- the < in the pane's top left corner -->
+    <a class="back" href="index.html#work" aria-label="Back to the beachcomb"><span class="arrow"></span></a>
+
+    <!-- ============================== TITLE ==============================
+         class="rev" on anything makes it fade in as you scroll to it -->
+    <h1 class="rev">PROJECT NAME</h1>
+    <!-- the hackathon it was built for — delete the line if it wasn't -->
+    <p class="award rev">Hackathon Name 2025</p>
+    <p class="lede rev">One or two sentences on what this is and why it exists.</p>
+
+    <p class="tools rev">Tool <i>·</i> Tool <i>·</i> Tool</p>
+
+    <!-- hero shot — delete the whole block if there isn't one -->
+    <div class="cover rev">
+      <img src="pictures/PROJECT/thumbnail.png" alt="PROJECT NAME — landing page">
+    </div>
+
+    <div class="rule"></div>
+
+    <!-- ============================ BACKGROUND ============================ -->
+    <section class="rev">
+      <h2>Background</h2>
+      <p class="body">What the product is, and what it does for the person using it.</p>
+      <p class="body">What you set out to change about the existing experience.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================= PROBLEM =============================
+         .callout is the pulled-out box: a label and one line in display type -->
+    <section class="rev">
+      <h2>The Problem</h2>
+      <p class="body">What makes this hard or annoying today.</p>
+      <div class="callout">
+        <p class="label">Design Challenge</p>
+        <p>How can we … ?</p>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================= RESEARCH =============================
+         h2 = category (deep blue, with a rule under it)
+         section.sub + h3 = subcategory inside it (sienna) -->
+    <section class="rev">
+      <h2>Research</h2>
+      <p class="body">How you went about it, and why that method suited the project.</p>
+    </section>
+
+    <!-- two-column table: two .head cells, then one .cell / .cell b pair per
+         row. On a phone the heads drop away and each pair reads down the page
+         with an arrow between them. -->
+    <section class="rev sub">
+      <h3>Competitive Analysis</h3>
+      <p class="body">What reviewing the existing products turned up.</p>
+      <div class="grid2">
+        <div class="head">What I observed</div>
+        <div class="head">Design opportunity</div>
+
+        <div class="cell">Observation</div>
+        <div class="cell b">What that opens up</div>
+
+        <div class="cell">Observation</div>
+        <div class="cell b">What that opens up</div>
+      </div>
+    </section>
+
+    <section class="rev sub">
+      <h3>Key Insights</h3>
+      <ul class="points">
+        <li>Insight.</li>
+        <li>Insight.</li>
+      </ul>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ========================= USERS & PERSONAS =========================
+         .personas is three across on desktop, stacked below 900px. The sheets
+         carry their own names, so there are no captions. Click zooms. -->
+    <section class="rev">
+      <h2>Primary Users</h2>
+      <p class="body">Who this was designed around.</p>
+      <ul class="points">
+        <li>Audience.</li>
+        <li>Audience.</li>
+      </ul>
+    </section>
+
+    <section class="rev sub">
+      <h3>User Personas</h3>
+      <p class="body">A line on who the three are. Click any sheet to read it full size.</p>
+      <div class="personas">
+        <figure><img src="pictures/PROJECT/userPersonas/Persona1.png" alt="Persona: name, role — what they want" loading="lazy"></figure>
+        <figure><img src="pictures/PROJECT/userPersonas/Persona2.png" alt="Persona: name, role — what they want" loading="lazy"></figure>
+        <figure><img src="pictures/PROJECT/userPersonas/Persona3.png" alt="Persona: name, role — what they want" loading="lazy"></figure>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ========================== DESIGN PROCESS ========================== -->
+    <section class="rev">
+      <h2>Design Process</h2>
+      <p class="body">The shape of the work, stage by stage.</p>
+    </section>
+
+    <!-- each step is one shade deeper than the last; six colours are defined,
+         so add or remove <span>s freely up to six -->
+    <section class="rev sub">
+      <h3>User Journey</h3>
+      <p class="body">Why you mapped it before designing anything.</p>
+      <p class="journey">
+        <span>Step one</span><i>›</i>
+        <span>Step two</span><i>›</i>
+        <span>Step three</span><i>›</i>
+        <span>Step four</span><i>›</i>
+        <span>Step five</span><i>›</i>
+        <span>Step six</span>
+      </p>
+    </section>
+
+    <!-- ---------------------------- CAROUSEL ----------------------------
+         Copy the whole .gal block for each set of screens.
+
+         · one .slide per screen AND one .dot per screen — the counts must
+           match, the dots are not generated
+         · data-cap  = the screen's name, shown bold under the frame
+         · data-note = what that screen is for (optional; used on the
+           high-fidelity set to describe the final product screen by screen)
+         · never set a width or height on the image — case.js measures each
+           one and fits it to the frame, leaving only the very long pages to
+           scroll inside their slide
+         · it advances itself every 5s, pausing while you hover, focus or
+           touch it; arrow keys drive whichever one you touched last;
+           clicking a screen opens it full size
+         ------------------------------------------------------------------- -->
+    <section class="rev sub">
+      <h3>Low-Fidelity Wireframes</h3>
+      <p class="body">What the wireframes were for.</p>
+      <div class="gal">
+        <div class="stage">
+          <div class="track">
+            <div class="slide" data-cap="Screen name"><img src="pictures/PROJECT/Low-Fi/Screen%201.png" alt="Low-fidelity wireframe — screen name" loading="lazy"></div>
+            <div class="slide" data-cap="Screen name"><img src="pictures/PROJECT/Low-Fi/Screen%202.png" alt="Low-fidelity wireframe — screen name" loading="lazy"></div>
+            <div class="slide" data-cap="Screen name"><img src="pictures/PROJECT/Low-Fi/Screen%203.png" alt="Low-fidelity wireframe — screen name" loading="lazy"></div>
+          </div>
+          <button class="gnav prev" type="button" aria-label="Previous wireframe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="gnav next" type="button" aria-label="Next wireframe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="dots">
+          <button class="dot on" type="button" aria-label="Wireframe 1"></button>
+          <button class="dot" type="button" aria-label="Wireframe 2"></button>
+          <button class="dot" type="button" aria-label="Wireframe 3"></button>
+        </div>
+        <p class="galcap"></p>
+      </div>
+    </section>
+
+    <section class="rev sub">
+      <h3>High-Fidelity Design</h3>
+      <p class="body">The visual decisions, and what the finished screens add up to.</p>
+      <div class="gal">
+        <div class="stage">
+          <div class="track">
+            <div class="slide" data-cap="Screen name"
+                 data-note="What this screen is for."><img src="pictures/PROJECT/High-Fi/Screen%201.png" alt="PROJECT NAME — screen name" loading="lazy"></div>
+            <div class="slide" data-cap="Screen name"
+                 data-note="What this screen is for."><img src="pictures/PROJECT/High-Fi/Screen%202.png" alt="PROJECT NAME — screen name" loading="lazy"></div>
+            <div class="slide" data-cap="Screen name"
+                 data-note="What this screen is for."><img src="pictures/PROJECT/High-Fi/Screen%203.png" alt="PROJECT NAME — screen name" loading="lazy"></div>
+          </div>
+          <button class="gnav prev" type="button" aria-label="Previous screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="gnav next" type="button" aria-label="Next screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="dots">
+          <button class="dot on" type="button" aria-label="Screen 1"></button>
+          <button class="dot" type="button" aria-label="Screen 2"></button>
+          <button class="dot" type="button" aria-label="Screen 3"></button>
+        </div>
+        <p class="galcap"></p>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================= OUTCOMES ============================= -->
+    <section class="rev">
+      <h2>Outcomes</h2>
+      <p class="body">What the finished design delivers. The project demonstrates my ability to:</p>
+      <ul class="points">
+        <li>Skill this project shows.</li>
+        <li>Skill this project shows.</li>
+      </ul>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================ REFLECTION ============================ -->
+    <section class="rev">
+      <h2>Reflection</h2>
+      <p class="body">What you took away from it.</p>
+      <p class="body">What you'd do next if you kept going.</p>
+    </section>
+
+    <button class="totop" type="button" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      Back to top
+    </button>
+  </article>
+</main>
+
+<!-- click any screen or persona sheet to read it full size — keep this even if
+     the page has no carousel, the personas use it too -->
+<div id="lightbox" aria-hidden="true"><img src="" alt=""></div>
+
+<script src="assets/case.js"></script>
+</body>
+</html>

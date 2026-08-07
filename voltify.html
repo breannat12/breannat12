@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voltify — Breanna Thayillam</title>
+<meta name="description" content="Voltify — UI/UX design for an energy plan optimization platform. A case study by Breanna Thayillam.">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Breanna Thayillam">
+<meta property="og:url" content="https://breannat12.github.io/github.io/voltify.html">
+<meta property="og:title" content="Voltify — UI/UX Case Study">
+<meta property="og:description" content="UI/UX design for an energy plan optimization platform — research, wireframes, and a seven-screen final product.">
+<meta property="og:image" content="https://breannat12.github.io/github.io/pictures/voltify/voltifyThumbnail.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/case.css">
+</head>
+<body>
+
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="vign" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="index.html#home">breanna thayillam.</a>
+  <nav class="topnav">
+    <a href="index.html#home">About</a>
+    <a href="index.html#work">Work</a>
+    <a href="index.html#toolkit">Toolkit</a>
+  </nav>
+</header>
+
+<main>
+  <article class="pane">
+    <a class="back" href="index.html#work" aria-label="Back to the beachcomb"><span class="arrow"></span></a>
+
+    <h1 class="rev">Voltify</h1>
+    <p class="lede rev">A web platform that turns choosing an electricity plan from an afternoon of comparison shopping into a few minutes of reading — and then keeps watching the market on your behalf.</p>
+
+    <p class="tools rev">Figma <i>·</i> Figma Make <i>·</i> Claude Design</p>
+
+    <div class="cover rev">
+      <img src="pictures/voltify/voltifyThumbnail.png" alt="Voltify — landing page">
+    </div>
+
+    <div class="rule"></div>
+
+    <!-- ============================ BACKGROUND ============================ -->
+    <section class="rev">
+      <h2>Background</h2>
+      <p class="body">Voltify is a web platform that simplifies the process of finding and managing residential energy plans. Instead of manually comparing providers and tracking contract renewals, users can upload an electricity bill or enter their energy usage by hand to receive personalized plan recommendations based on their consumption habits.</p>
+      <p class="body">The platform also automates ongoing monitoring, notifying users when better plans become available so their bill keeps coming down over time.</p>
+      <p class="body">The goal was to transform a traditionally confusing process into a simple, transparent experience that helps users confidently choose — and continue managing — the best electricity plan for their home.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================= PROBLEM ============================= -->
+    <section class="rev">
+      <h2>The Problem</h2>
+      <p class="body">Choosing an energy plan is confusing and time-consuming. Consumers have to compare providers, pricing structures, contract lengths, promotional offers, and cancellation policies while estimating which option best fits their household's usage.</p>
+      <p class="body">Many people stay on expensive plans simply because switching takes too much effort, or because they never notice the chance to save.</p>
+      <div class="callout">
+        <p class="label">Design Challenge</p>
+        <p>How can we simplify choosing an electricity plan while helping users continue to save money after over time?</p>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================= RESEARCH ============================= -->
+    <section class="rev">
+      <h2>Research</h2>
+      <p class="body">Since this was a self-initiated concept project, I focused on competitive research and assumption-based user research to understand the pain points inside the energy comparison experience.</p>
+    </section>
+
+    <section class="rev sub">
+      <h3>Competitive Analysis</h3>
+      <p class="body">Reviewing existing energy comparison sites surfaced the same handful of usability patterns again and again — and, with them, the openings this product could work in.</p>
+      <div class="grid2">
+        <div class="head">What I observed</div>
+        <div class="head">Design opportunity</div>
+
+        <div class="cell">Too many plans shown at once</div>
+        <div class="cell b">Personalize recommendations based on actual usage</div>
+
+        <div class="cell">Technical pricing language</div>
+        <div class="cell b">Use plain language throughout onboarding</div>
+
+        <div class="cell">Switching feels complicated</div>
+        <div class="cell b">Break the process into smaller steps</div>
+
+        <div class="cell">No ongoing plan management</div>
+        <div class="cell b">Build a dashboard that keeps providing value</div>
+      </div>
+    </section>
+
+    <section class="rev sub">
+      <h3>Key Insights</h3>
+      <ul class="points">
+        <li>Users want confidence more than they want dozens of choices.</li>
+        <li>Personalized recommendations reduce decision fatigue.</li>
+        <li>Showing estimated savings builds trust.</li>
+        <li>Automation is what provides value after the switch is made.</li>
+      </ul>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ========================= USERS & PERSONAS ========================= -->
+    <section class="rev">
+      <h2>Primary Users</h2>
+      <p class="body">The platform was designed around homeowners and renters looking to reduce their monthly electricity costs while simplifying how they manage their energy plan.</p>
+      <ul class="points">
+        <li>Homeowners looking to reduce monthly electricity costs</li>
+        <li>Apartment renters choosing an energy plan for the first time</li>
+        <li>Existing customers who want cheaper plans monitored for them instead of comparing providers by hand each year</li>
+      </ul>
+    </section>
+
+    <section class="rev sub">
+      <h3>User Personas</h3>
+      <p class="body">Three personas carried the design decisions: someone who suspects she's overpaying, someone who has never done this before, and someone who never wants to do it again. Click any sheet to read it full size.</p>
+      <div class="personas">
+        <figure>
+          <img src="pictures/voltify/userPersonas/VoltifyPersona1.png" alt="Persona: Sarah Chen, the Cost Saver — a 36-year-old software engineer who wants a cheaper plan matched to her household's usage" loading="lazy">
+        </figure>
+        <figure>
+          <img src="pictures/voltify/userPersonas/VoltifyPersona2.png" alt="Persona: Jude Holland, the First-Time Customer — a 23-year-old recent graduate choosing his first electricity plan" loading="lazy">
+        </figure>
+        <figure>
+          <img src="pictures/voltify/userPersonas/VoltifyPersona3.png" alt="Persona: Alex Martinez, the Optimal Automator — a 49-year-old financial analyst who wants plan management automated" loading="lazy">
+        </figure>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ========================== DESIGN PROCESS ========================== -->
+    <section class="rev">
+      <h2>Design Process</h2>
+      <p class="body">From a map of the journey, to grayscale wireframes, to a finished interface — each stage settling one set of questions before the next one opened.</p>
+    </section>
+
+    <section class="rev sub">
+      <h3>User Journey</h3>
+      <p class="body">I mapped the whole user journey first before starting on any interface designs.</p>
+      <p class="journey">
+        <span>Learn about Voltify</span><i>›</i>
+        <span>Upload Bill</span><i>›</i>
+        <span>See Recommendations</span><i>›</i>
+        <span>Compare Plans</span><i>›</i>
+        <span>Switch Provider</span><i>›</i>
+        <span>Monitor Savings</span>
+      </p>
+    </section>
+
+    <section class="rev sub">
+      <h3>Low-Fidelity Wireframes</h3>
+      <p class="body">Grayscale wireframes let me explore layout, hierarchy, and flow before spending any time on visual styling — quick to iterate on, and enough to validate the experience end to end.</p>
+      <div class="gal">
+        <div class="stage">
+          <div class="track">
+            <div class="slide" data-cap="Landing Page"><img src="pictures/voltify/Low-Fi/Landing%20Page.png" alt="Low-fidelity wireframe — landing page" loading="lazy"></div>
+            <div class="slide" data-cap="How It Works"><img src="pictures/voltify/Low-Fi/How%20it%20Works%20Page.png" alt="Low-fidelity wireframe — How It Works page" loading="lazy"></div>
+            <div class="slide" data-cap="Savings Calculator by Uploading Bill"><img src="pictures/voltify/Low-Fi/Calculate%20Savings%20Page%20-%20Upload.png" alt="Low-fidelity wireframe — savings calculator, bill upload flow" loading="lazy"></div>
+            <div class="slide" data-cap="Savings Calculator by Manual Entry"><img src="pictures/voltify/Low-Fi/Calculate%20Savings%20Page%20-%20Manual.png" alt="Low-fidelity wireframe — savings calculator, manual usage flow" loading="lazy"></div>
+            <div class="slide" data-cap="Compare Plans"><img src="pictures/voltify/Low-Fi/Compare%20Plans%20Page.png" alt="Low-fidelity wireframe — plan comparison" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Overview"><img src="pictures/voltify/Low-Fi/User%20Overview.png" alt="Low-fidelity wireframe — user dashboard overview" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Analytics"><img src="pictures/voltify/Low-Fi/User%20Analytics.png" alt="Low-fidelity wireframe — usage analytics" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Recommendations"><img src="pictures/voltify/Low-Fi/User%20Recommendations.png" alt="Low-fidelity wireframe — plan recommendations" loading="lazy"></div>
+          </div>
+          <button class="gnav prev" type="button" aria-label="Previous wireframe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="gnav next" type="button" aria-label="Next wireframe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="dots">
+          <button class="dot on" type="button" aria-label="Wireframe 1"></button>
+          <button class="dot" type="button" aria-label="Wireframe 2"></button>
+          <button class="dot" type="button" aria-label="Wireframe 3"></button>
+          <button class="dot" type="button" aria-label="Wireframe 4"></button>
+          <button class="dot" type="button" aria-label="Wireframe 5"></button>
+          <button class="dot" type="button" aria-label="Wireframe 6"></button>
+          <button class="dot" type="button" aria-label="Wireframe 7"></button>
+          <button class="dot" type="button" aria-label="Wireframe 8"></button>
+        </div>
+        <p class="galcap"></p>
+      </div>
+    </section>
+
+    <section class="rev sub">
+      <h3>High-Fidelity Design</h3>
+      <p class="body">With the flow settled, I translated the wireframes into a finished interface built on clear visual hierarchy, card-based layouts, high contrast for accessibility, consistent spacing, and modern typography. A navy and teal palette communicates reliability while keeping primary actions unmistakable. Together these screens carry the product from a first visit through to long-term savings.</p>
+      <div class="gal">
+        <div class="stage">
+          <div class="track">
+            <div class="slide" data-cap="Landing Page"
+                 data-note="Introduces the product, states the benefits, and invites users to calculate what they could save."><img src="pictures/voltify/High-Fi/Landing%20Page.png" alt="Voltify — landing page" loading="lazy"></div>
+            <div class="slide" data-cap="How It Works"
+                 data-note="Explains the recommendation process step by step, so uncertainty is settled before anyone hands over their information."><img src="pictures/voltify/High-Fi/How%20it%20Works%20Page.png" alt="Voltify — How It Works page" loading="lazy"></div>
+            <div class="slide" data-cap="Log In"
+                 data-note="Returning users pick up where they left off — saved usage, current plan, and monitoring settings all in one account."><img src="pictures/voltify/High-Fi/Log%20In%20Page.png" alt="Voltify — log in page" loading="lazy"></div>
+            <div class="slide" data-cap="Savings Calculator by Uploading Bill"
+                 data-note="Upload an electricity bill and the usage is read off it, so onboarding asks for nothing the user has to go and look up."><img src="pictures/voltify/High-Fi/Calculate%20Savings%20Page_Upload.png" alt="Voltify — savings calculator, bill upload flow" loading="lazy"></div>
+            <div class="slide" data-cap="Savings Calculator by Manual Entry"
+                 data-note="Or enter usage by hand — a second way in, for anyone without a bill to hand."><img src="pictures/voltify/High-Fi/Calculate%20Savings%20Page_Manual.png" alt="Voltify — savings calculator, manual usage flow" loading="lazy"></div>
+            <div class="slide" data-cap="Compare Plans"
+                 data-note="Personalized recommendations with estimated savings, contract length, ratings, and pricing in one clean comparison."><img src="pictures/voltify/High-Fi/Compare%20Plans%20page.png" alt="Voltify — plan comparison" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Overview"
+                 data-note="Monthly spending, projected savings, contract timelines, and how the current plan is actually performing."><img src="pictures/voltify/High-Fi/Energy%20Plan%20Comparison%20Website.png" alt="Voltify — dashboard overview with monthly bill, annual projection, and contract countdown" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Analytics"
+                 data-note="Historical usage and spending trends, so consumption habits become legible rather than guessed at."><img src="pictures/voltify/High-Fi/Energy%20Plan%20Comparison%20Website-1.png" alt="Voltify — usage analytics, showing usage by time of day and monthly history" loading="lazy"></div>
+            <div class="slide" data-cap="Dashboard Recommendations"
+                 data-note="Continuous market monitoring that surfaces better plans, keeping the product useful long past the first switch."><img src="pictures/voltify/High-Fi/Energy%20Plan%20Comparison%20Website-2.png" alt="Voltify — recommendations, listing cheaper plans with monthly savings" loading="lazy"></div>
+          </div>
+          <button class="gnav prev" type="button" aria-label="Previous screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="gnav next" type="button" aria-label="Next screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="dots">
+          <button class="dot on" type="button" aria-label="Screen 1"></button>
+          <button class="dot" type="button" aria-label="Screen 2"></button>
+          <button class="dot" type="button" aria-label="Screen 3"></button>
+          <button class="dot" type="button" aria-label="Screen 4"></button>
+          <button class="dot" type="button" aria-label="Screen 5"></button>
+          <button class="dot" type="button" aria-label="Screen 6"></button>
+          <button class="dot" type="button" aria-label="Screen 7"></button>
+          <button class="dot" type="button" aria-label="Screen 8"></button>
+          <button class="dot" type="button" aria-label="Screen 9"></button>
+        </div>
+        <p class="galcap"></p>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- ============================ REFLECTION ============================ -->
+    <section class="rev">
+      <h2>Reflection</h2>
+      <p class="body">The biggest takeaway was how much clarity matters when designing financial products. Rather than overwhelming users with every available option, revealing information progressively, personalizing recommendations, and stating potential savings plainly made the whole experience more approachable.</p>
+      <p class="body">If I kept developing Voltify, my next steps would be usability testing with homeowners, validating the assumptions made during research, and extending the product with mobile experiences, AI-powered explanations of each recommendation, and personalized savings notifications.</p>
+    </section>
+
+    <button class="totop" type="button" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      Back to top
+    </button>
+  </article>
+</main>
+
+<!-- click any screen or persona sheet to read it full size -->
+<div id="lightbox" aria-hidden="true"><img src="" alt=""></div>
+
+<script src="assets/case.js"></script>
+</body>
+</html>
